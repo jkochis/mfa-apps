@@ -1,0 +1,242 @@
+// !$*UTF8*$!
+{
+	1D3623240D0F684500981E51 /* TapAppDelegate.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {817, 806}}";
+			sepNavSelRange = "{674, 3}";
+			sepNavVisRange = "{390, 552}";
+		};
+	};
+	1D3623250D0F684500981E51 /* TapAppDelegate.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1139, 2821}}";
+			sepNavSelRange = "{2007, 0}";
+			sepNavVisRange = "{0, 1002}";
+		};
+	};
+	1D6058900D05DD3D006BFB54 /* Tap */ = {
+		activeExec = 0;
+		executables = (
+			953320611219DD5F00EC7FAB /* Tap */,
+		);
+	};
+	29B97313FDCFA39411CA2CEA /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeExecutable = 953320611219DD5F00EC7FAB /* Tap */;
+		activeSDKPreference = iphonesimulator3.2;
+		activeTarget = 1D6058900D05DD3D006BFB54 /* Tap */;
+		addToTargets = (
+			1D6058900D05DD3D006BFB54 /* Tap */,
+		);
+		codeSenseManager = 953320751219DD6D00EC7FAB /* Code sense */;
+		executables = (
+			953320611219DD5F00EC7FAB /* Tap */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					700,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 304441087;
+			PBXWorkspaceStateSaveDate = 304441087;
+		};
+		perUserProjectItems = {
+			9508A7D5121C67E900DE9204 = 9508A7D5121C67E900DE9204 /* PBXTextBookmark */;
+			9508A81A121C695600DE9204 = 9508A81A121C695600DE9204 /* PBXTextBookmark */;
+			9508A86F121C6A2500DE9204 = 9508A86F121C6A2500DE9204 /* PlistBookmark */;
+			9508A870121C6A2500DE9204 = 9508A870121C6A2500DE9204 /* PlistBookmark */;
+			9508A880121C6C3100DE9204 = 9508A880121C6C3100DE9204 /* PlistBookmark */;
+			9508A88C121C6CB900DE9204 = 9508A88C121C6CB900DE9204 /* PlistBookmark */;
+			9508A88D121C6CB900DE9204 = 9508A88D121C6CB900DE9204 /* PlistBookmark */;
+			9508A8A8121C71A200DE9204 = 9508A8A8121C71A200DE9204 /* PlistBookmark */;
+			9508A8B3121C72E600DE9204 = 9508A8B3121C72E600DE9204 /* PlistBookmark */;
+			9508A8CD121D6CB400DE9204 = 9508A8CD121D6CB400DE9204 /* PlistBookmark */;
+		};
+		sourceControlManager = 953320741219DD6D00EC7FAB /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	9508A7D5121C67E900DE9204 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1D3623240D0F684500981E51 /* TapAppDelegate.h */;
+		name = "TapAppDelegate.h: 1";
+		rLen = 1839;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1239;
+		vrLoc = 600;
+	};
+	9508A81A121C695600DE9204 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1D3623250D0F684500981E51 /* TapAppDelegate.m */;
+		name = "TapAppDelegate.m: 80";
+		rLen = 0;
+		rLoc = 2007;
+		rType = 0;
+		vrLen = 1002;
+		vrLoc = 0;
+	};
+	9508A81E121C695600DE9204 /* Info.plist */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = text.plist.xml;
+		name = Info.plist;
+		path = /Users/jkochis/Downloads/FrenchAudioTour.bundle/Info.plist;
+		sourceTree = "<absolute>";
+	};
+	9508A86F121C6A2500DE9204 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 8BF9F85C0FCECCCB00F2764D /* Entitlements.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+		);
+		name = "/Users/jkochis/tap-tours-read-only/ipodapp/Tap/Entitlements.plist";
+		rLen = 0;
+		rLoc = 9223372036854775808;
+	};
+	9508A870121C6A2500DE9204 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 9508A81E121C695600DE9204 /* Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+			CFBundleDisplayName,
+		);
+		name = /Users/jkochis/Downloads/FrenchAudioTour.bundle/Info.plist;
+		rLen = 0;
+		rLoc = 0;
+	};
+	9508A880121C6C3100DE9204 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 9508A881121C6C3100DE9204 /* Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+		);
+		name = /Users/jkochis/Downloads/FrenchAudioTour.bundle/Info.plist;
+		rLen = 0;
+		rLoc = 9223372036854775808;
+	};
+	9508A881121C6C3100DE9204 /* Info.plist */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = text.plist.xml;
+		name = Info.plist;
+		path = /Users/jkochis/Downloads/FrenchAudioTour.bundle/Info.plist;
+		sourceTree = "<absolute>";
+	};
+	9508A88C121C6CB900DE9204 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 9508A881121C6C3100DE9204 /* Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+		);
+		name = /Users/jkochis/Downloads/FrenchAudioTour.bundle/Info.plist;
+		rLen = 0;
+		rLoc = 9223372036854775808;
+	};
+	9508A88D121C6CB900DE9204 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 9508A881121C6C3100DE9204 /* Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+		);
+		name = /Users/jkochis/Downloads/FrenchAudioTour.bundle/Info.plist;
+		rLen = 0;
+		rLoc = 9223372036854775808;
+	};
+	9508A8A8121C71A200DE9204 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 9508A881121C6C3100DE9204 /* Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+		);
+		name = /Users/jkochis/Downloads/FrenchAudioTour.bundle/Info.plist;
+		rLen = 0;
+		rLoc = 9223372036854775808;
+	};
+	9508A8B3121C72E600DE9204 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 9508A881121C6C3100DE9204 /* Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+		);
+		name = /Users/jkochis/Downloads/FrenchAudioTour.bundle/Info.plist;
+		rLen = 0;
+		rLoc = 9223372036854775808;
+	};
+	9508A8CD121D6CB400DE9204 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 9508A881121C6C3100DE9204 /* Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+		);
+		name = /Users/jkochis/Downloads/FrenchAudioTour.bundle/Info.plist;
+		rLen = 0;
+		rLoc = 9223372036854775808;
+	};
+	953320611219DD5F00EC7FAB /* Tap */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = Tap;
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+	};
+	953320741219DD6D00EC7FAB /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
+		};
+	};
+	953320751219DD6D00EC7FAB /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+}
