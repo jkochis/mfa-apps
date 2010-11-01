@@ -267,7 +267,6 @@
 								<string>29B97314FDCFA39411CA2CEA</string>
 								<string>080E96DDFE201D6D7F000001</string>
 								<string>8BD9A2560FC1960E001E97D9</string>
-								<string>8BD9A2570FC1962A001E97D9</string>
 								<string>D069D7EB1247E3DD00A86662</string>
 								<string>8BD9A2580FC1963F001E97D9</string>
 								<string>29B97317FDCFA39411CA2CEA</string>
@@ -277,7 +276,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>14</integer>
+									<integer>5</integer>
 									<integer>3</integer>
 									<integer>1</integer>
 									<integer>0</integer>
@@ -321,7 +320,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>StopGroupController.m</string>
+								<string>KeypadController.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -329,11 +328,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>StopGroupController.m</string>
+										<string>KeypadController.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>D0035082127F00E1007A20E0</string>
+										<string>D0D5A5D1127F55DB000F4040</string>
 										<key>history</key>
 										<array>
 											<string>D08DD4AA124116A500A55A64</string>
@@ -459,7 +458,6 @@
 											<string>D0675352127DC297007FD658</string>
 											<string>D067535E127DD5BD007FD658</string>
 											<string>D067536D127DDFF3007FD658</string>
-											<string>D0675384127E19B8007FD658</string>
 											<string>D067538B127E1A43007FD658</string>
 											<string>D067538C127E1A43007FD658</string>
 											<string>D06753A5127E1F87007FD658</string>
@@ -489,7 +487,8 @@
 											<string>D003506D127EFE2C007A20E0</string>
 											<string>D003506E127EFE2C007A20E0</string>
 											<string>D0035073127EFFEF007A20E0</string>
-											<string>D0035074127EFFEF007A20E0</string>
+											<string>D0035089127F1527007A20E0</string>
+											<string>D003508B127F1527007A20E0</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -547,9 +546,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>D0035011127EF318007A20E0</string>
+				<string>D0D5A5D2127F55DB000F4040</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>D0035012127EF318007A20E0</string>
+				<string>D0D5A5D3127F55DB000F4040</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -687,9 +686,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>D039C99012258B7C00A1DBF5</string>
-		<string>1C78EAAD065D492600B07095</string>
 		<string>/Users/rbrecher/Documents/Development/MFAGuide/MFA Guide.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -770,7 +767,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>D039C99012258B7C00A1DBF5</string>
-				<string>D0035013127EF318007A20E0</string>
+				<string>D0D5A5D4127F55DB000F4040</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

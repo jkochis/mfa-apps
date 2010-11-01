@@ -92,7 +92,7 @@
 	}
 	
 	// Get sponsor image
-	xmlNodePtr sponsorImageNode = [TourMLUtils getImageInDocument:tourDoc];
+	xmlNodePtr sponsorImageNode = [TourMLUtils getSponsorImageInDocument:tourDoc];
 	if (sponsorImageNode) {
 		char *sponsorImageChars = (char*)xmlNodeGetContent(sponsorImageNode);
 		NSString *sponsorImageSrc = [NSString stringWithUTF8String:sponsorImageChars];
@@ -142,7 +142,7 @@
 	}
 	
 	// Shorten path for <SponsorImage>
-	xmlNodePtr sponsorImageNode = [TourMLUtils getImageInDocument:tourDoc];
+	xmlNodePtr sponsorImageNode = [TourMLUtils getSponsorImageInDocument:tourDoc];
 	if (sponsorImageNode) {
 		char *sponsorImageChars = (char*)xmlNodeGetContent(sponsorImageNode);
 		NSString *sponsorImageSrc = [NSString stringWithUTF8String:sponsorImageChars];

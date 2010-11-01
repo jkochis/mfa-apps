@@ -117,6 +117,10 @@
 		NSString *sponsorImagePath = [tourBundle pathForResource:[[sponsorImageSrc lastPathComponent] stringByDeletingPathExtension]
 														  ofType:[[sponsorImageSrc lastPathComponent] pathExtension]
 													 inDirectory:[sponsorImageSrc stringByDeletingLastPathComponent]];
+		free(sponsorImageChars);
+		
+		NSLog(@"%@", sponsorImageSrc);
+		
 		sponsorImage = [[TapDetectingImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:sponsorImagePath]];
 		[sponsorImage setDelegate:self];
 		[[self view] addSubview:sponsorImage];
