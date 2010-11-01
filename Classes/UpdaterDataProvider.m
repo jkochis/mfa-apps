@@ -59,6 +59,15 @@ enum {
 	[urlRequest release];
 }
 
+- (void)cancel
+{
+	if (urlConnection) {
+		[urlConnection cancel];
+		[urlConnection release];
+		urlConnection = nil;
+	}
+}
+
 #pragma mark -
 #pragma mark NSURLConnection Delegate Methods
 
@@ -99,9 +108,12 @@ enum {
 			if ([delegate respondsToSelector:@selector(dataProvider:didRetrieveTourML:)]) {
 				[delegate dataProvider:self didRetrieveTourML:tourDoc];
 			}
+			xmlFreeDoc(tourDoc);
 		}
 	}
 	[webData release];
+	webData = nil;
+	[urlConnection release];
 	urlConnection = nil;
 }
 

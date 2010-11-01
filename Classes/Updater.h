@@ -22,6 +22,7 @@
 	UpdaterDataProvider *dataProvider;
 	BOOL checking;
 	
+	HTTPBundleManager *bundleManager;
 	NSArray *availableTours;
 	NSMutableArray *updatableTours;
 	
@@ -35,6 +36,7 @@
 
 - (void)checkForUpdates;
 - (void)performUpdate;
+- (void)cancel;
 
 @end
 

@@ -140,7 +140,8 @@
 	
 	// Check for the update code
 	if ([stopCode isEqualToString:[[NSUserDefaults standardUserDefaults] stringForKey:@"updateCode"]]) {
-		
+		[(TapAppDelegate *)[[UIApplication sharedApplication] delegate] closeTourAndShowUpdater];
+		return;
 	}
 	
     // Load the StopNavigation view

@@ -5,12 +5,15 @@
 #import "StopGroupController.h"
 #import "TourController.h"
 
+enum {
+	kBackgroundUpdaterAlert = 1
+};
+
 @interface TapAppDelegate (PrivateMethods)
 
 - (void)scheduleBackgroundUpdates;
 
 @end
-
 
 @implementation TapAppDelegate
 
@@ -34,6 +37,7 @@
 {
 	[window release];
 	[menuController release];
+	[alertView release];
 	
 	[currentTourController release];
 	
@@ -58,6 +62,9 @@
 	AudioServicesPlaySystemSound(errorFileObject);
 }
 
+#pragma mark -
+#pragma mark Tours
+
 - (BOOL)loadTourWithBundleName:(NSString *)bundleName
 {
 	// Setup tour controller for later, also catch any errors now
@@ -79,6 +86,15 @@
 - (void)closeTour
 {
 	[menuController dismissModalViewControllerAnimated:YES];
+	[currentTourController release];
+	currentTourController = nil;
+}
+
+- (void)closeTourAndShowUpdater
+{
+	[menuController dismissModalViewControllerAnimated:NO];
+	[menuController showUpdater];
+	[currentTourController release];
 	currentTourController = nil;
 }
 
@@ -145,21 +161,29 @@
 	[Analytics trackAction:NSLocalizedString(@"launch - en", @"App starting") forStop:@"tap"];
 	
 	// Start updates
-//	[self scheduleBackgroundUpdates];
-	
-	
-	[[NSUserDefaults standardUserDefaults] setObject:@"99999" forKey:@"killCode"];
-	[[NSUserDefaults standardUserDefaults] setObject:@"11111" forKey:@"updateCode"];
-	
-	
-	
+	[self scheduleBackgroundUpdates];
+		
     [window makeKeyAndVisible];
+}
+
+- (void)applicationWillResignActive:(UIApplication *)application
+{
+	
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application
+{
+	
 }
 
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
 {
 	if ([[[notification userInfo] objectForKey:@"action"] isEqualToString:@"update"]) {
 		if (![[self backgroundUpdater] isUpdating]) {
+			alertView = [[UIAlertView alloc] initWithTitle:@"Updating..." message:@"The app is currently updating, please do not turn off." delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:nil];
+			[alertView setTag:kBackgroundUpdaterAlert];
+			[alertView show];
+			[alertView release];
 			[backgroundUpdater update];
 		}
 	}
@@ -170,20 +194,25 @@
 
 - (void)scheduleBackgroundUpdates
 {	
-	if (![[[UIApplication sharedApplication] scheduledLocalNotifications] count]) {
-		unsigned unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit;
-		UILocalNotification *localNotification = [[UILocalNotification alloc] init];
-		NSDate *date = [NSDate date];
-		NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:unitFlags fromDate:date];
-		[dateComponents setHour:0];
-		[dateComponents setMinute:0];
-		[localNotification setFireDate:[[NSCalendar currentCalendar] dateFromComponents:dateComponents]];
-		[localNotification setRepeatInterval:NSDayCalendarUnit];
-		[localNotification setAlertBody:@"Perform automatic update for MFA Tours?"];
-		[localNotification setAlertAction:@"Update"];
-		[localNotification setUserInfo:[NSDictionary dictionaryWithObject:@"update" forKey:@"action"]];
-		[[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
-	}
+	[[UIApplication sharedApplication] cancelAllLocalNotifications];
+	
+	unsigned unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit;
+	UILocalNotification *localNotification = [[UILocalNotification alloc] init];
+	NSDate *date = [NSDate date];
+	NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:unitFlags fromDate:date];
+	[dateComponents setHour:22];
+	[dateComponents setMinute:0];
+	NSDate *fireDate = [[NSCalendar currentCalendar] dateFromComponents:dateComponents];
+	NSScanner *scanner = [NSScanner scannerWithString:[[[UIDevice currentDevice] uniqueIdentifier] substringToIndex:5]];
+	unsigned long long value;
+	[scanner scanHexLongLong:&value];
+	[localNotification setFireDate:[fireDate dateByAddingTimeInterval:60 * UPDATE_INTERVAL * (value % UPDATE_GROUPS)]];
+	[localNotification setRepeatInterval:NSDayCalendarUnit];
+	[localNotification setAlertBody:@"Perform automatic update for MFA Tours?"];
+	[localNotification setAlertAction:@"Update"];
+	[localNotification setUserInfo:[NSDictionary dictionaryWithObject:@"update" forKey:@"action"]];
+	[[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
+	[localNotification release];
 }
 
 #pragma mark -
@@ -192,6 +221,7 @@
 - (void)backgroundUpdaterDidFinishUpdating:(BackgroundUpdater *)backgroundUpdater
 {
 	[menuController refresh];
+	[alertView dismissWithClickedButtonIndex:1 animated:YES];
 }
 
 - (void)backgroundUpdater:(BackgroundUpdater *)backgroundUpdater didFailWithError:(NSError *)error
@@ -206,43 +236,18 @@
 {
 	[[window viewWithTag:SPLASH_SLIDE_IMAGE_TOP_TAG] removeFromSuperview];
 	[[window viewWithTag:SPLASH_SLIDE_IMAGE_BTM_TAG] removeFromSuperview];
-	
-	// Show a prompt for the help video
-//	UIAlertView *helpPrompt = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Watch help video?", @"Prompt header")
-//														 message:NSLocalizedString(@"Get an overview of how to use and make the most of TAP.", @"Prompt message")
-//														delegate:self
-//											   cancelButtonTitle:NSLocalizedString(@"Skip", @"Skip the video")
-//											   otherButtonTitles:nil];
-//	[helpPrompt addButtonWithTitle:NSLocalizedString(@"Yes", @"Confirm to watch video")];
-//	[helpPrompt show];
-//	[helpPrompt release];
 }
 
 #pragma mark -
 #pragma mark UIAlertViewDelegate Methods
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+- (void)alertView:(UIAlertView *)theAlertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-//	if (buttonIndex == 1)
-//	{
-//		// Play the help video
-//		xmlNodePtr helpVideoNode = [TourMLUtils getStopInDocument:tourDoc withCode:TAP_HELP_VIDEO_CODE];
-//
-//		if (helpVideoNode == NULL)
-//		{
-//			[self playError];
-//			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
-//															message:NSLocalizedString(@"Unable to load the help video!", @"Missing video error")
-//														   delegate:nil
-//												  cancelButtonTitle:@"OK"
-//												  otherButtonTitles:nil];
-//			[alert show];
-//			[alert release];
-//			return; // failed
-//		}
-//		
-//		[self loadStop:[StopFactory stopForStopNode:helpVideoNode]];
-//	}
+	if ([theAlertView tag] == kBackgroundUpdaterAlert) {
+		if (buttonIndex == 0) {
+			[backgroundUpdater cancel];
+		}
+	}
 }
 
 @end

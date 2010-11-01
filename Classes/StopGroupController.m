@@ -43,6 +43,7 @@
 	if ((self = [super initWithNibName:@"StopGroup" bundle:[NSBundle mainBundle]])) {
 		[self setStopGroup:stop];
 		[self setTitle:[stopGroup getTitle]];
+		firstRun = YES;
 	}
 	return self;
 }
@@ -176,12 +177,15 @@
 - (void)viewDidAppear:(BOOL)animated
 {	
 	// Check for intro
-	BaseStop *refStop = [[self stopGroup] stopAtIndex:0];
-	if ([refStop isKindOfClass:[VideoStop class]] &&
-		[(VideoStop *)refStop isAudio]) {
-		[self openAudioStop:(VideoStop *)refStop];
-		[stopTable selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:YES scrollPosition:UITableViewScrollPositionNone];
-	}	
+	if (firstRun) {
+		firstRun = NO;
+		BaseStop *refStop = [[self stopGroup] stopAtIndex:0];
+		if ([refStop isKindOfClass:[VideoStop class]] &&
+			[(VideoStop *)refStop isAudio]) {
+			[self openAudioStop:(VideoStop *)refStop];
+			[stopTable selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:YES scrollPosition:UITableViewScrollPositionNone];
+		}
+	}
 	[super viewDidAppear:animated];
 }
 
@@ -259,6 +263,7 @@
 {
 	if (controlsTimer) {
 		[controlsTimer invalidate];
+		[controlsTimer release];
 		controlsTimer = nil;
 	}	
 }
@@ -393,6 +398,7 @@
 {
 	if (audioPlayer) {
 		[audioPlayer stop];
+		[audioPlayer release];
 		audioPlayer = nil;
 	}
 }
@@ -408,6 +414,7 @@
 	[self updateCurrentTimeForAudioPlayer];
 	if (updateTimer) {
 		[updateTimer invalidate];
+		updateTimer = nil;
 	}
 	if (audioPlayer.playing) {
 		[self togglePause];
@@ -415,7 +422,6 @@
 	}
 	else {
 		[self togglePlay];
-		updateTimer = nil;
 	}
 }
 
@@ -531,6 +537,7 @@
 	[self updateCurrentTimeForVideoPlayer];
 	if (updateTimer) {
 		[updateTimer invalidate];
+		updateTimer = nil;
 	}
 	if ([moviePlayerController playbackState] == MPMoviePlaybackStatePlaying) {
 		[self togglePause];
@@ -542,7 +549,6 @@
 			[self togglePlay];
 			moviePlayerIsPlaying = NO;
 		}
-		updateTimer = nil;
 	}
 }
 
@@ -679,8 +685,11 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {	
+	// Stop any audio or video
 	[self stopAudio];
 	[self stopVideo];
+	
+	// Take action for selection
 	NSUInteger idx = [indexPath indexAtPosition:1];
 	BaseStop *refStop = [[self stopGroup] stopAtIndex:idx];
 	if ([refStop isKindOfClass:[VideoStop class]] &&
@@ -688,6 +697,7 @@
 		[self openAudioStop:(VideoStop *)refStop];
 	}
 	else {
+		[self hideControls];
 		[(TourController *)[self navigationController] loadStop:refStop];
 	}
 }

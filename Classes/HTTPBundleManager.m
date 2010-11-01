@@ -67,17 +67,37 @@
 	[dataProvider getTourML:tourMLUrl];
 }
 
+- (void)cancel
+{
+	if (dataProvider) {
+		[dataProvider cancel];
+	}
+	if (httpRequest) {
+		[httpRequest cancel];
+	}
+}
+
 - (void)buildFileList:(xmlDocPtr)tourDoc
 {
 	// Generate a list of bundle files
 	bundleFiles = [[NSMutableArray alloc] init];
 		
 	// Get splash image
-	xmlNodePtr tourImage = [TourMLUtils getImageInDocument:tourDoc];
-	if (tourImage) {
-		char *imageChars = (char*)xmlNodeGetContent(tourImage);
+	xmlNodePtr imageNode = [TourMLUtils getImageInDocument:tourDoc];
+	if (imageNode) {
+		char *imageChars = (char*)xmlNodeGetContent(imageNode);
 		NSString *imageSrc = [NSString stringWithUTF8String:imageChars];
 		[bundleFiles addObject:imageSrc];
+		free(imageChars);
+	}
+	
+	// Get sponsor image
+	xmlNodePtr sponsorImageNode = [TourMLUtils getImageInDocument:tourDoc];
+	if (sponsorImageNode) {
+		char *sponsorImageChars = (char*)xmlNodeGetContent(sponsorImageNode);
+		NSString *sponsorImageSrc = [NSString stringWithUTF8String:sponsorImageChars];
+		[bundleFiles addObject:sponsorImageSrc];
+		free(sponsorImageChars);
 	}
 	
 	// Add remaining files from tour
@@ -90,6 +110,7 @@
 			[bundleFiles addObjectsFromArray:[stop getAllFiles]];
 		}
 	}
+	xmlXPathFreeNodeSet(stopNodes);
 	[bundleFiles sortUsingComparator:^(id obj1, id obj2) {
 		return [(NSString *)obj1 compare:(NSString *)obj2];
 	}];
@@ -117,6 +138,7 @@
 		char *imageChars = (char*)xmlNodeGetContent(imageNode);
 		NSString *imageSrc = [NSString stringWithUTF8String:imageChars];
 		xmlNodeSetContent(imageNode, (xmlChar*)[[NSString stringWithFormat:@"files/%@", [imageSrc lastPathComponent]] UTF8String]);
+		free(imageChars);
 	}
 	
 	// Shorten path for <SponsorImage>
@@ -125,6 +147,7 @@
 		char *sponsorImageChars = (char*)xmlNodeGetContent(sponsorImageNode);
 		NSString *sponsorImageSrc = [NSString stringWithUTF8String:sponsorImageChars];
 		xmlNodeSetContent(sponsorImageNode, (xmlChar*)[[NSString stringWithFormat:@"files/%@", [sponsorImageSrc lastPathComponent]] UTF8String]);
+		free(sponsorImageChars);
 	}
 	
 	// Shorten path for <Source> nodes 
@@ -133,11 +156,13 @@
 		for (NSInteger i = 0; i < sourceNodes->nodeNr; i++)
 		{
 			xmlNodePtr sourceNode = sourceNodes->nodeTab[i];
-			char *source = (char*)xmlNodeGetContent(sourceNode);
-			NSString *sourceString = [NSString stringWithUTF8String:source];
+			char *sourceChars = (char*)xmlNodeGetContent(sourceNode);
+			NSString *sourceString = [NSString stringWithUTF8String:sourceChars];
 			xmlNodeSetContent(sourceNode, (xmlChar*)[[NSString stringWithFormat:@"files/%@", [sourceString lastPathComponent]] UTF8String]);
+			free(sourceChars);
 		}
 	}
+	xmlXPathFreeNodeSet(sourceNodes);
 	
 	// Shorten path for <Param> nodes being used for image headers 
 	xmlNodeSetPtr headerNodes = [TourMLUtils getAllHeaderNodesInDocument:tourDoc];
@@ -145,11 +170,13 @@
 		for (NSInteger i = 0; i < headerNodes->nodeNr; i++)
 		{
 			xmlNodePtr headerNode = headerNodes->nodeTab[i];
-			char *value = (char*)xmlGetProp(headerNode, (xmlChar*)"value");
-			NSString *valueString = [NSString stringWithUTF8String:value];
+			char *valueChars = (char*)xmlGetProp(headerNode, (xmlChar*)"value");
+			NSString *valueString = [NSString stringWithUTF8String:valueChars];
 			xmlSetProp(headerNode, (xmlChar*)"value", (xmlChar*)[[NSString stringWithFormat:@"files/%@", [valueString lastPathComponent]] UTF8String]);
+			free(valueChars);
 		}
 	}
+	xmlXPathFreeNodeSet(headerNodes);
 	
 	// Prepare to write file
 	NSArray *documentsPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -192,6 +219,8 @@
 		if ([delegate respondsToSelector:@selector(bundleManagerCompletedUpdate:)]) {
 			[delegate bundleManagerCompletedUpdate:self];
 		}
+		[httpRequest release];
+		httpRequest = nil;
 		return;
 	}
 	
@@ -220,16 +249,18 @@
 #pragma mark -
 #pragma mark UpdaterDataProviderDelegate Methods
 
-- (void)dataProvider:(UpdaterDataProvider *)dataProvider didFailWithError:(NSError *)error
+- (void)dataProvider:(UpdaterDataProvider *)theDataProvider didFailWithError:(NSError *)error
 {
 	if ([delegate respondsToSelector:@selector(bundleManager:didFailToRetrieveTourML:)]) {
 		[delegate bundleManager:self didFailToRetrieveTourML:bundleUrl];
 	}
 }
 
-- (void)dataProvider:(UpdaterDataProvider *)dataProvider didRetrieveTourML:(xmlDocPtr)tourDoc
+- (void)dataProvider:(UpdaterDataProvider *)theDataProvider didRetrieveTourML:(xmlDocPtr)tourDoc
 {
 	[self buildFileList:tourDoc];
+	[dataProvider release];
+	dataProvider = nil;
 }
 
 #pragma mark -

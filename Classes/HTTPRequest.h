@@ -24,6 +24,7 @@
 @property (nonatomic, retain) id delegate;
 
 - (void)retrieveFile:(NSURL *)pathToFile;
+- (void)cancel;
 
 @end
 

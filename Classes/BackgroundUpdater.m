@@ -44,6 +44,14 @@
 	[[self updater] checkForUpdates];
 }
 
+- (void)cancel
+{
+	if (updater) {
+		NSLog(@"BackgroundUpdater updater cancel");
+		[updater cancel];
+	}
+}
+
 #pragma mark -
 #pragma mark UpdaterDelegate Methods
 

@@ -24,6 +24,7 @@
 
 - (id)initWithDelegate:(id<BackgroundUpdaterDelegate>)theDelegate;
 - (void)update;
+- (void)cancel;
 
 @end
 

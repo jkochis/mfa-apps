@@ -175,6 +175,7 @@
 			[sponsorImage setAlpha:0.0f];
 		} completion:^(BOOL finished){
 			[sponsorImage removeFromSuperview];
+			[sponsorImage release];
 			sponsorImage = nil;
 		}];
 	}
@@ -264,6 +265,7 @@
 {
 	if (sponsorTimer) {
 		[sponsorTimer invalidate];
+		[sponsorTimer release];
 		sponsorTimer = nil;
 	}
 	[self hideSponsorImage];

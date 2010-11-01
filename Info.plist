@@ -34,5 +34,7 @@
 	<array>
 		<string>HelveticaNeueLTStd-MdCn.otf</string>
 	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 </dict>
 </plist>

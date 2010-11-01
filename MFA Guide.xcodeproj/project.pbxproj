@@ -49,6 +49,7 @@
 		D04D4D0C124BD322001137C4 /* keypad-clear-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = D04D4D0B124BD322001137C4 /* keypad-clear-icon.png */; };
 		D04D4D27124BD7C7001137C4 /* keypad-go-disabled.png in Resources */ = {isa = PBXBuildFile; fileRef = D04D4D26124BD7C7001137C4 /* keypad-go-disabled.png */; };
 		D04D4D2F124BD961001137C4 /* key-top-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = D04D4D2E124BD961001137C4 /* key-top-bg.png */; };
+		D0675213127CBE34007FD658 /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0675212127CBE34007FD658 /* LoadingView.m */; };
 		D069D7B21247D22200A86662 /* MenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = D069D7B01247D22200A86662 /* MenuController.m */; };
 		D069D7E81247E3CB00A86662 /* FTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = D069D7E71247E3CB00A86662 /* FTPRequest.m */; };
 		D069D7F81247E3F000A86662 /* UpdaterDataProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = D069D7F31247E3F000A86662 /* UpdaterDataProvider.m */; };
@@ -192,6 +193,8 @@
 		D04D4D0B124BD322001137C4 /* keypad-clear-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "keypad-clear-icon.png"; path = "Resources/Images/keypad-clear-icon.png"; sourceTree = "<group>"; };
 		D04D4D26124BD7C7001137C4 /* keypad-go-disabled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "keypad-go-disabled.png"; path = "Resources/Images/keypad-go-disabled.png"; sourceTree = "<group>"; };
 		D04D4D2E124BD961001137C4 /* key-top-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "key-top-bg.png"; path = "Resources/Images/key-top-bg.png"; sourceTree = "<group>"; };
+		D0675211127CBE34007FD658 /* LoadingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadingView.h; sourceTree = "<group>"; };
+		D0675212127CBE34007FD658 /* LoadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadingView.m; sourceTree = "<group>"; };
 		D069D7AF1247D22200A86662 /* MenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuController.h; sourceTree = "<group>"; };
 		D069D7B01247D22200A86662 /* MenuController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuController.m; sourceTree = "<group>"; };
 		D069D7E61247E3CB00A86662 /* FTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTPRequest.h; sourceTree = "<group>"; };
@@ -589,6 +592,8 @@
 				D0371E6B125BA98B00259660 /* BevelView.m */,
 				D0371E23125B908900259660 /* LandscapeMoviePlayerViewController.h */,
 				D0371E24125B908900259660 /* LandscapeMoviePlayerViewController.m */,
+				D0675211127CBE34007FD658 /* LoadingView.h */,
+				D0675212127CBE34007FD658 /* LoadingView.m */,
 				D0371D6C125B5EBF00259660 /* RoundedRectangleView.h */,
 				D0371D6D125B5EBF00259660 /* RoundedRectangleView.m */,
 				8BB31DD61039AF3900DDA1C8 /* TapDetectingImageView.h */,
@@ -768,6 +773,7 @@
 				D087A22512639232001CA720 /* FTPBundleManagerFile.m in Sources */,
 				D0DB88FE126736780027B46A /* Tour.m in Sources */,
 				D09A392F127218E20086D4E3 /* TapDetectingView.m in Sources */,
+				D0675213127CBE34007FD658 /* LoadingView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

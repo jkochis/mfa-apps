@@ -15,6 +15,7 @@
 	
 	IBOutlet UIBarButtonItem *backButton;
 	IBOutlet UIBarButtonItem *utilityButton;
+	NSInteger utilityButtonAction;
 	
 	IBOutlet UIBarButtonItem *toggleButton;
 	IBOutlet UIView *currentViewContainer;
@@ -33,6 +34,7 @@
 	IBOutlet UIProgressView *progressView;
 	
 	Updater *updater;
+	BOOL encounteredErrors;
 }
 
 @property (nonatomic, retain) IBOutlet UIView *currentViewContainer;

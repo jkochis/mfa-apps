@@ -165,10 +165,12 @@ enum {
 		[inputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 		[inputStream setDelegate:nil];
 		[inputStream close];
+		[inputStream release];
 		inputStream = nil;
 	}
 	if (outputStream) {
 		[outputStream close];
+		[outputStream release];
 		outputStream = nil;
 	}
 }

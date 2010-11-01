@@ -82,7 +82,7 @@
 		return NULL;
 	}
 	xmlNodeSetPtr stops = xpathObj->nodesetval;
-	xmlXPathFreeNodeSetList(xpathObj);
+//	xmlXPathFreeNodeSetList(xpathObj);
 	return stops;
 }
 

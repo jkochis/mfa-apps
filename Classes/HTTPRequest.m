@@ -8,13 +8,36 @@
 
 #import "HTTPRequest.h"
 
+@interface HTTPRequest (PrivateMethods)
+
+- (void)cleanup;
+
+@end
+
 
 @implementation HTTPRequest
 
 @synthesize delegate;
 
+#pragma mark -
+#pragma mark Memory Management
+
+- (void)dealloc
+{
+	[delegate release];
+	[urlConnection release];
+	[remotePath release];
+	[filePath release];
+	[fileHandle release];
+	[super dealloc];
+}
+
+#pragma mark -
+#pragma mark Retrieving Files
+
 - (void)retrieveFile:(NSURL *)pathToFile
 {	
+	[self cleanup];
 	remotePath = [pathToFile retain];
 	NSURLRequest *urlRequest = [[NSURLRequest alloc] initWithURL:pathToFile];
 	urlConnection = [[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];
@@ -27,6 +50,27 @@
 	[urlRequest release];
 }
 
+- (void)cancel
+{
+	if (urlConnection) {
+		[urlConnection cancel];
+		[urlConnection release];
+		urlConnection = nil;
+	}
+}
+
+- (void)cleanup
+{
+	[remotePath release];
+	remotePath = nil;
+	[filePath release];
+	filePath = nil;
+	[fileHandle release];
+	fileHandle = nil;
+	[urlConnection release];
+	urlConnection = nil;
+}
+
 #pragma mark -
 #pragma mark NSURLConnection Delegate Methods
 
@@ -35,8 +79,6 @@
 	// Check status code
 	if ([response isMemberOfClass:[NSHTTPURLResponse class]] && [(NSHTTPURLResponse *)response statusCode] != 200) {
 		[connection cancel];
-		[fileHandle release];
-		urlConnection = nil;
 		if ([delegate respondsToSelector:@selector(httpRequest:didFailWithError:)]) {
 			NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%@: HTTP Status Code: %ld", remotePath, [(NSHTTPURLResponse *)response statusCode]], NSLocalizedDescriptionKey, remotePath, NSURLErrorFailingURLErrorKey, nil];
 			NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:[(NSHTTPURLResponse *)response statusCode] userInfo:dict];
@@ -65,8 +107,6 @@
 		// Check date against delegate
 		if (![delegate httpRequest:self shouldRetrieveFile:remotePath withModificationDate:date]) {
 			[connection cancel];
-			[fileHandle release];
-			urlConnection = nil;
 			if ([delegate respondsToSelector:@selector(httpRequest:didCancelFile:)]) {
 				[delegate httpRequest:self didCancelFile:remotePath];
 			}
@@ -85,8 +125,6 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {	
-	urlConnection = nil;
-	[fileHandle release];
 	if ([delegate respondsToSelector:@selector(httpRequest:didFailWithError:)]) {
 		[delegate httpRequest:self didFailWithError:error];
 	}
@@ -94,8 +132,6 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {	
-	urlConnection = nil;
-	[fileHandle release];
 	if ([delegate respondsToSelector:@selector(httpRequest:didRetrieveFile:)]) {
 		[delegate httpRequest:self didRetrieveFile:filePath];
 	}

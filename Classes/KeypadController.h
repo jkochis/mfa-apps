@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 
-#define MINIMUM_CODE_LENGTH			2
+#define MINIMUM_CODE_LENGTH			3
 #define MAXIMUM_CODE_LENGTH			5
 
 @interface KeypadController : UIViewController {

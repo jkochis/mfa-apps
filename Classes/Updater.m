@@ -25,6 +25,7 @@
 - (void)dealloc
 {
 	[dataProvider release];
+	[bundleManager release];
 	[availableTours release];
 	[updatableTours release];
 	[super dealloc];
@@ -45,8 +46,17 @@
 - (void)performUpdate
 {
 	// start queue
-	encounteredErrors = NO;
 	[self updateNextTour];
+}
+
+- (void)cancel
+{
+	if (dataProvider) {
+		[dataProvider cancel];
+	}
+	if (bundleManager) {
+		[bundleManager cancel];
+	}
 }
 
 - (void)updateNextTour
@@ -61,10 +71,12 @@
 	// Update bundle using http bundle manager
 	encounteredErrors = NO;
 	ToursXMLTour *remoteTour = [updatableTours objectAtIndex:0];
-	HTTPBundleManager *bundleManager = [[HTTPBundleManager alloc] init];
+	if (bundleManager) {
+		[bundleManager release];
+	}
+	bundleManager = [[HTTPBundleManager alloc] init];
 	[bundleManager setDelegate:self];
 	[bundleManager retrieveOrUpdateBundle:[remoteTour bundleName] withTourML:[NSURL URLWithString:[remoteTour bundleTourML]]];
-	[bundleManager release];
 	
 	// Notify delegate
 	if ([delegate respondsToSelector:@selector(updater:didStartUpdatingBundle:)]) {
@@ -86,6 +98,8 @@
 		if ([delegate respondsToSelector:@selector(updaterDidFinish:)]) {
 			[delegate updaterDidFinish:self];
 		}
+		[bundleManager release];
+		bundleManager = nil;
 	}
 }
 
@@ -131,14 +145,16 @@
 	}
 }
 
-- (void)dataProvider:(UpdaterDataProvider *)dataProvider didRetrieveTours:(NSArray *)tours
+- (void)dataProvider:(UpdaterDataProvider *)theDataProvider didRetrieveTours:(NSArray *)tours
 {
-	// Be sure to hold on to tours, the notify delegate if there are updates available
+	// Be sure to hold on to tours, then notify delegate if there are updates available
 	checking = NO;
 	availableTours = [tours retain];
 	if ([delegate respondsToSelector:@selector(updater:hasAvailableUpdates:)]) {
 		[delegate updater:self hasAvailableUpdates:[self needsUpdating:tours]];
 	}
+	[dataProvider release];
+	dataProvider = nil;
 }
 
 /*

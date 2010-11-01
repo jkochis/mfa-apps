@@ -17,5 +17,6 @@
 @property (nonatomic, retain) NSArray *tours;
 
 - (void)refresh;
+- (void)showUpdater;
 
 @end

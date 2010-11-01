@@ -15,8 +15,16 @@
 enum {
 	kDataProviderErrorAlert = 0,
 	kBundleManagerErrorAlert = 1,
-	kUpdatesAvailableAlert = 2,
-	kNoUpdatesAvailableAlert = 3
+	kCheckingForUpdatesAlert = 2,
+	kUpdatesAvailableAlert = 3,
+	kNoUpdatesAvailableAlert = 4
+};
+
+enum {
+	kCheckForUpdatesAction = 0,
+	kUpdateAction = 1,
+	kCancelAction = 2,
+	kNoAction = 3
 };
 
 #pragma mark -
@@ -56,15 +64,16 @@ enum {
 	[updater setDelegate:self];
 }
 
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
 }
 
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-}
 
 #pragma mark -
 #pragma mark Memory Management
@@ -90,8 +99,7 @@ enum {
 #pragma mark View Events
 
 - (void)viewDidAppear:(BOOL)animated
-{
-	[backButton setEnabled:NO];
+{	
 	[updater checkForUpdates];
 	[self addToConsole:@"Checking for updates..."];
 	[super viewDidAppear:animated];
@@ -103,8 +111,9 @@ enum {
 - (void)getToursFromCoreData
 {
 	NSArray *coreDataTours = [CoreDataManager getTours];
-	if ([tours count]) {
+	if (tours) {
 		[tours removeAllObjects];
+		[tours release];
 	}
 	tours = [[NSMutableArray alloc] init];
 	for (NSUInteger i = 0; i < [coreDataTours count]; i++)
@@ -148,6 +157,7 @@ enum {
 
 - (IBAction)backSelected:(id)sender
 {
+	[updater cancel];
 	[[self parentViewController] dismissModalViewControllerAnimated:YES];
 }
 
@@ -167,13 +177,37 @@ enum {
 
 - (IBAction)utilityButtonSelected:(id)sender
 {
-	[self updateAll];
+	switch (utilityButtonAction) {
+		case kCheckForUpdatesAction: {
+			[updater checkForUpdates];
+			break;
+		}
+		case kUpdateAction: {
+			[self updateAll];
+			break;
+		}
+		case kCancelAction: {
+			[updater cancel];
+			[self completeUpdate];
+			[progress setHidden:YES];
+			[utilityButton setEnabled:YES];
+			[utilityButton setTitle:@"Update"];
+			utilityButtonAction = kUpdateAction;
+			break;
+		}
+		default: {
+			break;
+		}
+	}
 }
 
 - (void)updateAll
 {
-	[backButton setEnabled:NO];
+	encounteredErrors = NO;
 	[updater performUpdate];
+	[utilityButton setEnabled:YES];
+	[utilityButton setTitle:@"Cancel"];
+	utilityButtonAction = kCancelAction;
 }
 
 - (void)updateProgressForCurrentBundle:(NSUInteger)fileNumber outOf:(NSUInteger)totalFiles
@@ -333,6 +367,9 @@ enum {
 			[[cell textLabel] setText:[xml title]];
 			[[cell detailTextLabel] setText:[NSString stringWithFormat:@"Updated on %@", [xml updatedDate]]];
 			[[cell detailTextLabel] setTextColor:[UIColor greenColor]];
+			[[cell detailTextLabel] setHidden:NO];
+			[[cell progressView] setHidden:YES];
+			[[cell fileCount] setHidden:YES];
 			break;
 		}
 		default: {
@@ -369,7 +406,6 @@ enum {
 - (void)updater:(Updater *)theUpdater hasAvailableUpdates:(NSUInteger)availableUpdates
 {
 	if (availableUpdates) {
-		[utilityButton setEnabled:YES];
 		[self checkUpdatableTours:[theUpdater updatableTours]];
 		[self addToConsole:[NSString stringWithFormat:@"%lu updates available", availableUpdates]];
 		UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Available Updates" 
@@ -382,7 +418,6 @@ enum {
 		[alertView release];
 	}
 	else {
-		[utilityButton setEnabled:NO];
 		[self addToConsole:@"No updates available"];
 		UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"No Updates Available" 
 															message:@"There are no updates available at this time." 
@@ -393,7 +428,6 @@ enum {
 		[alertView show];
 		[alertView release];
 	}
-	[backButton setEnabled:YES];
 }
 
 - (void)updater:(Updater *)theUpdater didStartUpdatingBundle:(NSString *)bundleName
@@ -404,6 +438,9 @@ enum {
 
 - (void)updater:(Updater *)theUpdater didFinishUpdatingBundle:(NSString *)bundleName
 {
+	if ([updater didEncounterErrors]) {
+		encounteredErrors = YES;
+	}
 	[self setCurrentBundleAsUpdated];
 	[self addToConsole:[NSString stringWithFormat:@"Finished Bundle: %@", bundleName]];
 }
@@ -432,7 +469,9 @@ enum {
 
 - (void)updaterDidFinish:(Updater *)theUpdater
 {	
-	if ([updater didEncounterErrors]) {
+	if (encounteredErrors) {
+		
+		// alert for errors
 		UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Errors Encountered" 
 															message:@"Please check the console for details." 
 														   delegate:self 
@@ -441,11 +480,24 @@ enum {
 		[alertView setTag:kBundleManagerErrorAlert];
 		[alertView show];
 		[alertView release];
+		
+		// enable update button
+		[utilityButton setEnabled:YES];
+		[utilityButton setTitle:@"Check for Updates"];
+		utilityButtonAction = kCheckForUpdatesAction;
 	}
+	else {
+		
+		// disable update button
+		[utilityButton setEnabled:NO];
+		[utilityButton setTitle:@"Update"];
+		utilityButtonAction = kNoAction;
+	}
+	
+	// complete update
 	[self completeUpdate];
 	[self addToConsole:@"Done!"];
 	[progress setHidden:YES];
-	[backButton setEnabled:YES];
 }
 
 #pragma mark -
@@ -459,17 +511,23 @@ enum {
 				[updater checkForUpdates];
 			}
 			else {
-				[backButton setEnabled:YES];
+				[utilityButton setEnabled:YES];
+				[utilityButton setTitle:@"Check for Updates"];
+				utilityButtonAction = kCheckForUpdatesAction;
 			}
 			break;
 		}
 		case kBundleManagerErrorAlert: {
-			
 			break;
 		}
 		case kUpdatesAvailableAlert: {
 			if (buttonIndex == 1) {
 				[self updateAll];
+			}
+			else {
+				[utilityButton setEnabled:YES];
+				[utilityButton setTitle:@"Update"];
+				utilityButtonAction = kUpdateAction;
 			}
 			break;
 		}

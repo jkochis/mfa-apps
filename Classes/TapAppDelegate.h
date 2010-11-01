@@ -14,7 +14,8 @@
 #import "MenuController.h"
 #import "TourController.h"
 
-#define UPDATE_INTERVAL 5
+#define UPDATE_INTERVAL 10
+#define UPDATE_GROUPS 60
 
 #define SPLASH_SLIDE_IMAGE_TOP_TAG	956
 #define SPLASH_SLIDE_IMAGE_BTM_TAG	957
@@ -27,6 +28,8 @@
 	BackgroundUpdater *backgroundUpdater;
 	
 	TourController *currentTourController;
+	
+	UIAlertView *alertView;
 	
 	CFURLRef clickFileURLRef;
     SystemSoundID clickFileObject;
@@ -49,5 +52,6 @@
 - (void)playError;
 
 - (BOOL)loadTourWithBundleName:(NSString *)bundleName;
+- (void)closeTourAndShowUpdater;
 
 @end

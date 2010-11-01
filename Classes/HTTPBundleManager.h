@@ -38,6 +38,7 @@
 @property (nonatomic, retain) NSFileManager *fileManager;
 
 - (void)retrieveOrUpdateBundle:(NSString *)theBundleName withTourML:(NSURL *)tourMLUrl;
+- (void)cancel;
 
 @end
 

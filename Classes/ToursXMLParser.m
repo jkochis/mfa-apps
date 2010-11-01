@@ -44,7 +44,13 @@
 			case XML_READER_TYPE_TEXT: {
 				temp = (char*)xmlTextReaderConstValue(reader);
 				currentValue = [NSString stringWithCString:temp encoding:NSUTF8StringEncoding];
-				if ([currentTag isEqualToString:@"Id"]) {
+				if ([currentTag isEqualToString:@"KillCode"]) {
+					[[NSUserDefaults standardUserDefaults] setObject:currentValue forKey:@"killCode"];
+				}
+				else if ([currentTag isEqualToString:@"UpdateCode"]) {					
+					[[NSUserDefaults standardUserDefaults] setObject:currentValue forKey:@"updateCode"];
+				}
+				else if ([currentTag isEqualToString:@"Id"]) {
 					[currentTour setId:[NSNumber numberWithInt:[currentValue intValue]]];
 				}
 				else if ([currentTag isEqualToString:@"Title"]) {
@@ -71,6 +77,7 @@
 			}
 		}
 	}
+	xmlFreeTextReader(reader);
 	[dateFormatter release];
 	return tours;
 }

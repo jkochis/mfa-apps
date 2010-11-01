@@ -8,9 +8,10 @@
 
 #import "MenuController.h"
 
+#import "CoreDataManager.h"
+#import "LoadingView.h"
 #import "TapAppDelegate.h"
 #import "UpdaterController.h"
-#import "CoreDataManager.h"
 
 @interface MenuController (PrivateMethods)
 
@@ -53,11 +54,16 @@
 //	}
 }
 
-- (IBAction)updateButtonSelected:(id)sender
+- (void)showUpdater
 {
 	UpdaterController *updaterController = [[UpdaterController alloc] init];
 	[updaterController setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
 	[self presentModalViewController:updaterController animated:YES];
+}
+
+- (IBAction)updateButtonSelected:(id)sender
+{
+	[self showUpdater];
 }
 
 #pragma mark -
