@@ -118,9 +118,6 @@
 														  ofType:[[sponsorImageSrc lastPathComponent] pathExtension]
 													 inDirectory:[sponsorImageSrc stringByDeletingLastPathComponent]];
 		free(sponsorImageChars);
-		
-		NSLog(@"%@", sponsorImageSrc);
-		
 		sponsorImage = [[TapDetectingImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:sponsorImagePath]];
 		[sponsorImage setDelegate:self];
 		[[self view] addSubview:sponsorImage];
@@ -175,7 +172,7 @@
 - (void)hideSponsorImage
 {
 	if (sponsorImage) {
-		[UIView animateWithDuration:1.0 animations:^{
+		[UIView animateWithDuration:0.5 animations:^{
 			[sponsorImage setAlpha:0.0f];
 		} completion:^(BOOL finished){
 			[sponsorImage removeFromSuperview];
