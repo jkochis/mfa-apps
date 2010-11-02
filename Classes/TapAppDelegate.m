@@ -1,5 +1,7 @@
 #import "TapAppDelegate.h"
+
 #import "BackgroundUpdater.h"
+#import "FileSharingManager.h"
 #import "KeypadController.h"
 #import "SplashController.h"
 #import "StopGroupController.h"
@@ -106,6 +108,9 @@ enum {
 	// Disable idle timer
 	[[UIApplication sharedApplication] setIdleTimerDisabled:YES];
 	
+	// Check documents directory to see if bundles have been manually added
+	[FileSharingManager checkBundles];
+	
     // Allocate the sounds
 	CFBundleRef mainBundle = CFBundleGetMainBundle();
 	clickFileURLRef = CFBundleCopyResourceURL(mainBundle, CFSTR("click"), CFSTR("aif"), NULL);
@@ -115,37 +120,6 @@ enum {
 	
 	// Add the navigation controller to the window
 	[window addSubview:[menuController view]];
-
-	// Split
-//	// Add overlay images
-//	UIImageView *splashTop = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tap-title-screen-top.png"]];
-//	UIImageView *splashBtm = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tap-title-screen-btm.png"]];
-//	[window addSubview:splashTop];
-//	[window addSubview:splashBtm];
-//	
-//	// Slide apart images
-//	[UIView beginAnimations:nil context:nil];
-//	[UIView setAnimationDuration:1.0f];
-//	[UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
-//	[UIView setAnimationDelegate:self];
-//	[UIView setAnimationDidStopSelector:@selector(splashSlideAnimationDidStop:finished:context:)];
-//	[splashTop setFrame:CGRectMake(0.0f, -480.0f, CGRectGetWidth([splashTop frame]), CGRectGetHeight([splashTop frame]))];
-//	[splashBtm setFrame:CGRectMake(0.0f, 480.0f, CGRectGetWidth([splashBtm frame]), CGRectGetHeight([splashBtm frame]))];
-//	[UIView commitAnimations];
-//
-//	// Clean up
-//	[splashTop release];
-//	[splashBtm release];
-	
-	// Fade
-//	UIImageView *splash = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Default.png"]];
-//	[window addSubview:splash];
-//	[UIView animateWithDuration:0.5f animations:^{
-//		[splash setAlpha:0.0f];
-//	} completion:^(BOOL finished){
-//		[splash removeFromSuperview];
-//		[splash release];
-//	}];
 	
 	// Slide
 	UIImageView *splash = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Default.png"]];
@@ -227,15 +201,6 @@ enum {
 - (void)backgroundUpdater:(BackgroundUpdater *)backgroundUpdater didFailWithError:(NSError *)error
 {
 	
-}
-
-#pragma mark -
-#pragma mark UIView Animation Delegate Methods
-
-- (void)splashSlideAnimationDidStop:(NSString *)animationID finished:(NSNumber *)finished context:(void *)context
-{
-	[[window viewWithTag:SPLASH_SLIDE_IMAGE_TOP_TAG] removeFromSuperview];
-	[[window viewWithTag:SPLASH_SLIDE_IMAGE_BTM_TAG] removeFromSuperview];
 }
 
 #pragma mark -

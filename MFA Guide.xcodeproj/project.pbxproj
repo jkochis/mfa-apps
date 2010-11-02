@@ -103,6 +103,7 @@
 		D087A22312639232001CA720 /* FTPBundleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D087A21E12639232001CA720 /* FTPBundleManager.m */; };
 		D087A22412639232001CA720 /* FTPBundleManagerDirectory.m in Sources */ = {isa = PBXBuildFile; fileRef = D087A22012639232001CA720 /* FTPBundleManagerDirectory.m */; };
 		D087A22512639232001CA720 /* FTPBundleManagerFile.m in Sources */ = {isa = PBXBuildFile; fileRef = D087A22212639232001CA720 /* FTPBundleManagerFile.m */; };
+		D089EB43127FA62E003BA4C9 /* FileSharingManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D089EB42127FA62E003BA4C9 /* FileSharingManager.m */; };
 		D08DD5051241271D00A55A64 /* TourController.m in Sources */ = {isa = PBXBuildFile; fileRef = D08DD5041241271D00A55A64 /* TourController.m */; };
 		D09A392F127218E20086D4E3 /* TapDetectingView.m in Sources */ = {isa = PBXBuildFile; fileRef = D09A392E127218E20086D4E3 /* TapDetectingView.m */; };
 		D0A4261C125C192500C2FADE /* table-cell-bg-selected.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A4261B125C192500C2FADE /* table-cell-bg-selected.png */; };
@@ -260,6 +261,8 @@
 		D087A22012639232001CA720 /* FTPBundleManagerDirectory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FTPBundleManagerDirectory.m; sourceTree = "<group>"; };
 		D087A22112639232001CA720 /* FTPBundleManagerFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTPBundleManagerFile.h; sourceTree = "<group>"; };
 		D087A22212639232001CA720 /* FTPBundleManagerFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FTPBundleManagerFile.m; sourceTree = "<group>"; };
+		D089EB41127FA62E003BA4C9 /* FileSharingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSharingManager.h; sourceTree = "<group>"; };
+		D089EB42127FA62E003BA4C9 /* FileSharingManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSharingManager.m; sourceTree = "<group>"; };
 		D08DD5031241271D00A55A64 /* TourController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TourController.h; sourceTree = "<group>"; };
 		D08DD5041241271D00A55A64 /* TourController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TourController.m; sourceTree = "<group>"; };
 		D09A392D127218E20086D4E3 /* TapDetectingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TapDetectingView.h; sourceTree = "<group>"; };
@@ -539,6 +542,8 @@
 				D0E59511124A7B4E0028F923 /* BackgroundUpdater.m */,
 				D0E59526124A99FB0028F923 /* CoreDataManager.h */,
 				D0E59527124A99FB0028F923 /* CoreDataManager.m */,
+				D089EB41127FA62E003BA4C9 /* FileSharingManager.h */,
+				D089EB42127FA62E003BA4C9 /* FileSharingManager.m */,
 				D087A21D12639232001CA720 /* FTPBundleManager.h */,
 				D087A21E12639232001CA720 /* FTPBundleManager.m */,
 				D087A21F12639232001CA720 /* FTPBundleManagerDirectory.h */,
@@ -774,6 +779,7 @@
 				D0DB88FE126736780027B46A /* Tour.m in Sources */,
 				D09A392F127218E20086D4E3 /* TapDetectingView.m in Sources */,
 				D0675213127CBE34007FD658 /* LoadingView.m in Sources */,
+				D089EB43127FA62E003BA4C9 /* FileSharingManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

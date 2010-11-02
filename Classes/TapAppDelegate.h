@@ -17,9 +17,6 @@
 #define UPDATE_INTERVAL 10
 #define UPDATE_GROUPS 60
 
-#define SPLASH_SLIDE_IMAGE_TOP_TAG	956
-#define SPLASH_SLIDE_IMAGE_BTM_TAG	957
-
 @interface TapAppDelegate : NSObject <BackgroundUpdaterDelegate, UIApplicationDelegate, UIAlertViewDelegate>
 {
 	IBOutlet UIWindow *window;

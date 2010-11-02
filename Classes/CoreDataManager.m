@@ -123,6 +123,19 @@ static CoreDataManager *sharedUpdatedCoreDataManager = nil;
 	return [results objectAtIndex:0];
 }
 
++ (Tour *)getTourByBundleName:(NSString *)bundleName
+{
+	NSManagedObjectContext *managedObjectContext = [[CoreDataManager sharedManager] managedObjectContext];
+	NSFetchRequest *request = [[[NSFetchRequest alloc] init] autorelease];
+	[request setEntity:[NSEntityDescription entityForName:@"Tour" inManagedObjectContext:managedObjectContext]];
+	[request setPredicate:[NSPredicate predicateWithFormat:@"bundleName == %@", bundleName]];
+	NSArray *results = [managedObjectContext executeFetchRequest:request error:nil];
+	if (!results || ![results count]) {
+		return nil;
+	}
+	return [results objectAtIndex:0];
+}
+
 + (Tour *)addOrUpdateTourWithId:(NSNumber *)tourId 
 						  title:(NSString *)title 
 					 bundleName:(NSString *)bundleName 
@@ -147,6 +160,26 @@ static CoreDataManager *sharedUpdatedCoreDataManager = nil;
 		return nil;
 	}
 	return tour;
+}
+
++ (BOOL)updaterTourUpdatedDate:(NSDate *)updatedDate byId:(NSNumber *)tourId
+{
+	NSManagedObjectContext *managedObjectContext = [[CoreDataManager sharedManager] managedObjectContext];
+	NSFetchRequest *request = [[[NSFetchRequest alloc] init] autorelease];
+	[request setEntity:[NSEntityDescription entityForName:@"Tour" inManagedObjectContext:managedObjectContext]];
+	[request setPredicate:[NSPredicate predicateWithFormat:@"id == %@", tourId]];
+	NSArray *results = [managedObjectContext executeFetchRequest:request error:nil];
+	if (!results || ![results count]) {
+		return NO;
+	}
+	Tour *tour = [results objectAtIndex:0];
+	[tour setUpdatedDate:updatedDate];
+	NSError *error;
+	if (![managedObjectContext save:&error]) {
+		NSLog(@"%@", [error localizedDescription]);
+		return NO;
+	}
+	return YES;
 }
 
 @end

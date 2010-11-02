@@ -9,6 +9,17 @@
 
 @implementation TourMLUtils
 
++ (xmlNodePtr)getIdInDocument:(xmlDocPtr)document
+{
+	xmlXPathObjectPtr xpathObj = [TourMLUtils executeXPathQuery:@"/TourML:Tour/TourML:Id" againstDocument:document];
+	if (xpathObj == NULL) {
+		return NULL;
+	}
+	xmlNodePtr id = xpathObj->nodesetval->nodeTab[0];
+	xmlXPathFreeObject(xpathObj);
+	return id;
+}
+
 + (xmlNodePtr)getTitleInDocument:(xmlDocPtr)document
 {
 	xmlXPathObjectPtr xpathObj = [TourMLUtils executeXPathQuery:@"/TourML:Tour/TourML:Title" againstDocument:document];
@@ -40,6 +51,17 @@
 	xmlNodePtr image = xpathObj->nodesetval->nodeTab[0];
 	xmlXPathFreeObject(xpathObj);
 	return image;
+}
+
++ (xmlNodePtr)getLanguageInDocument:(xmlDocPtr)document
+{
+	xmlXPathObjectPtr xpathObj = [TourMLUtils executeXPathQuery:@"/TourML:Tour/TourML:Language" againstDocument:document];
+	if (xpathObj == NULL) {
+		return NULL;
+	}
+	xmlNodePtr language = xpathObj->nodesetval->nodeTab[0];
+	xmlXPathFreeObject(xpathObj);
+	return language;
 }
 
 + (xmlNodePtr)getLocalizationInDocument:(xmlDocPtr)document withName:(NSString *)name

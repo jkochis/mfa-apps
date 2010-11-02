@@ -12,6 +12,9 @@
 
 }
 
+// Check if an id exists in the tour document and return it
++ (xmlNodePtr)getIdInDocument:(xmlDocPtr)document;
+
 // Check if a title exists in the tour document and return it
 + (xmlNodePtr)getTitleInDocument:(xmlDocPtr)document;
 
@@ -20,6 +23,9 @@
 
 // Check if an sponsor image exists in the tour document and return it
 + (xmlNodePtr)getSponsorImageInDocument:(xmlDocPtr)document;
+
+// Check if an language exists in the tour document and return it
++ (xmlNodePtr)getLanguageInDocument:(xmlDocPtr)document;
 
 // Check if a localization exits in the tour document and return it
 + (xmlNodePtr)getLocalizationInDocument:(xmlDocPtr)document withName:(NSString *)name;

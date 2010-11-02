@@ -25,11 +25,13 @@
 
 + (NSArray *)getTours;
 + (Tour *)getTourById:(NSNumber *)tourId;
++ (Tour *)getTourByBundleName:(NSString *)bundleName;
 + (Tour *)addOrUpdateTourWithId:(NSNumber *)tourId 
 						  title:(NSString *)title 
 					 bundleName:(NSString *)bundleName 
 					   language:(NSString *)language 
 					updatedDate:(NSDate *)updatedDate 
 						 errors:(BOOL)errors;
++ (BOOL)updaterTourUpdatedDate:(NSDate *)updatedDate byId:(NSNumber *)tourId;
 
 @end
