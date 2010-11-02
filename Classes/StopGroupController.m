@@ -2,10 +2,6 @@
 #import "TapAppDelegate.h"
 #import "TourController.h"
 
-#define HEADER_IMAGE_VIEW_TAG	8637
-
-#pragma mark -
-
 @interface StopGroupController (PrivateMethods)
 
 - (void)showControls;
@@ -13,7 +9,7 @@
 - (void)hideControls;
 - (void)cancelControlsTimer;
 
-- (void)openAudioStop:(VideoStop *)audioStop;
+- (BOOL)audioStopIsVideo:(VideoStop *)audioStop;
 
 - (void)playAudio:(NSString *)audioSrc;
 - (void)stopAudio;
@@ -182,7 +178,15 @@
 		BaseStop *refStop = [[self stopGroup] stopAtIndex:0];
 		if ([refStop isKindOfClass:[VideoStop class]] &&
 			[(VideoStop *)refStop isAudio]) {
-			[self openAudioStop:(VideoStop *)refStop];
+			VideoStop *audioStop = (VideoStop *)refStop;
+			NSString *audioSrc = [audioStop getSourcePath];
+			if ([self audioStopIsVideo:audioStop]) {
+				[self playVideo:audioSrc];
+			}
+			else {
+				[self playAudio:audioSrc];
+				[self showControls];
+			}
 			[stopTable selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:YES scrollPosition:UITableViewScrollPositionNone];
 		}
 	}
@@ -342,18 +346,14 @@
 #pragma mark -
 #pragma mark Audio Player
 
-- (void)openAudioStop:(VideoStop *)audioStop
+- (BOOL)audioStopIsVideo:(VideoStop *)audioStop
 {
 	NSString *audioSrc = [audioStop getSourcePath];
 	NSString *audioExtension = [[audioSrc pathExtension] lowercaseString];
 	if ([audioExtension isEqualToString:@"mp4"]) {
-		[self playVideo:audioSrc];
+		return YES;
 	}
-	else {
-		[self hideVideo];
-		[self playAudio:audioSrc];
-		[self showControls];
-	}
+	return NO;
 }
 
 - (void)playAudio:(NSString *)audioSrc
@@ -694,7 +694,15 @@
 	BaseStop *refStop = [[self stopGroup] stopAtIndex:idx];
 	if ([refStop isKindOfClass:[VideoStop class]] &&
 		[(VideoStop *)refStop isAudio]) {
-		[self openAudioStop:(VideoStop *)refStop];
+		VideoStop *audioStop = (VideoStop *)refStop;
+		if ([self audioStopIsVideo:audioStop]) {
+			[(TourController *)[self navigationController] loadStop:audioStop];
+		}
+		else {
+			NSString *audioSrc = [audioStop getSourcePath];
+			[self playAudio:audioSrc];
+			[self showControls];
+		}
 	}
 	else {
 		[self hideControls];
