@@ -21,9 +21,9 @@
 		);
 	};
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
-		activeBuildConfigurationName = Debug;
+		activeBuildConfigurationName = Distribution;
 		activeExecutable = 953320611219DD5F00EC7FAB /* Tap */;
-		activeSDKPreference = iphonesimulator3.2;
+		activeSDKPreference = iphoneos4.1;
 		activeTarget = 1D6058900D05DD3D006BFB54 /* Tap */;
 		addToTargets = (
 			1D6058900D05DD3D006BFB54 /* Tap */,
@@ -55,8 +55,8 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 304441087;
-			PBXWorkspaceStateSaveDate = 304441087;
+			PBXPerProjectTemplateStateSaveDate = 310659790;
+			PBXWorkspaceStateSaveDate = 310659790;
 		};
 		perUserProjectItems = {
 			9508A7D5121C67E900DE9204 = 9508A7D5121C67E900DE9204 /* PBXTextBookmark */;
@@ -221,6 +221,8 @@
 		executableUserSymbolLevel = 0;
 		libgmallocEnabled = 0;
 		name = Tap;
+		savedGlobals = {
+		};
 		showTypeColumn = 0;
 		sourceDirectories = (
 		);
