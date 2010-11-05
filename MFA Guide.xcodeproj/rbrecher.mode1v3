@@ -332,7 +332,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>D089EB9C127FB2F6003BA4C9</string>
+										<string>D088A17712844C2F00EAE242</string>
 										<key>history</key>
 										<array>
 											<string>D08DD4AA124116A500A55A64</string>
@@ -490,7 +490,7 @@
 											<string>D089EB87127FB201003BA4C9</string>
 											<string>D089EB88127FB201003BA4C9</string>
 											<string>D089EB9A127FB2F6003BA4C9</string>
-											<string>D089EB9B127FB2F6003BA4C9</string>
+											<string>D089EB9F127FB5D4003BA4C9</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -548,9 +548,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>D089EB8C127FB201003BA4C9</string>
+				<string>D088A17812844C2F00EAE242</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>D089EB8D127FB201003BA4C9</string>
+				<string>D088A17912844C2F00EAE242</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -688,11 +688,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>D089EB9D127FB2F6003BA4C9</string>
-		<string>D089EB9E127FB2F6003BA4C9</string>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>D039C99012258B7C00A1DBF5</string>
-		<string>1C78EAAD065D492600B07095</string>
 		<string>/Users/rbrecher/Documents/Development/MFAGuide/MFA Guide.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -717,7 +713,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>FileSharingManager.m</string>
+								<string></string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -734,8 +730,6 @@
 							<string>314pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -775,7 +769,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>D039C99012258B7C00A1DBF5</string>
-				<string>D089EB8E127FB201003BA4C9</string>
+				<string>D088A17A12844C2F00EAE242</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -788,7 +782,7 @@
 			<key>WindowToolGUID</key>
 			<string>D039C99012258B7C00A1DBF5</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>FirstTimeWindowDisplayed</key>
