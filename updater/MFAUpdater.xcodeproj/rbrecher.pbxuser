@@ -1,0 +1,214 @@
+// !$*UTF8*$!
+{
+	1D3623240D0F684500981E51 /* MFAUpdaterAppDelegate.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1171, 555}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 502}";
+		};
+	};
+	1D6058900D05DD3D006BFB54 /* MFAUpdater */ = {
+		activeExec = 0;
+		executables = (
+			D0DC0B4D12708D14005ED45C /* MFAUpdater */,
+		);
+	};
+	28D7ACF60DDB3853001CB0EB /* MFAUpdaterViewController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1171, 532}}";
+			sepNavSelRange = "{237, 0}";
+			sepNavVisRange = "{0, 335}";
+		};
+	};
+	28D7ACF70DDB3853001CB0EB /* MFAUpdaterViewController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1171, 555}}";
+			sepNavSelRange = "{370, 0}";
+			sepNavVisRange = "{0, 528}";
+		};
+	};
+	29B97313FDCFA39411CA2CEA /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeExecutable = D0DC0B4D12708D14005ED45C /* MFAUpdater */;
+		activeTarget = 1D6058900D05DD3D006BFB54 /* MFAUpdater */;
+		codeSenseManager = D0DC0B6012708D25005ED45C /* Code sense */;
+		executables = (
+			D0DC0B4D12708D14005ED45C /* MFAUpdater */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					993,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 310911052;
+			PBXWorkspaceStateSaveDate = 310911052;
+		};
+		perUserProjectItems = {
+			D08082031288205900712843 /* PlistBookmark */ = D08082031288205900712843 /* PlistBookmark */;
+			D08082041288205900712843 /* PBXTextBookmark */ = D08082041288205900712843 /* PBXTextBookmark */;
+			D08082051288205900712843 /* PBXTextBookmark */ = D08082051288205900712843 /* PBXTextBookmark */;
+			D08082061288205900712843 /* PBXTextBookmark */ = D08082061288205900712843 /* PBXTextBookmark */;
+			D08082071288205900712843 /* PBXTextBookmark */ = D08082071288205900712843 /* PBXTextBookmark */;
+			D0DC0B7412708F16005ED45C = D0DC0B7412708F16005ED45C /* PBXTextBookmark */;
+			D0DC0B7712708F33005ED45C = D0DC0B7712708F33005ED45C /* PBXTextBookmark */;
+			D0DC0B7812708F33005ED45C = D0DC0B7812708F33005ED45C /* PlistBookmark */;
+			D0DC0B7912708F33005ED45C = D0DC0B7912708F33005ED45C /* PlistBookmark */;
+		};
+		sourceControlManager = D0DC0B5F12708D25005ED45C /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	D08082031288205900712843 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 8D1107310486CEB800E47090 /* MFAUpdater-Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+		);
+		name = "/Users/rbrecher/Documents/Development/MFAGuide/updater/MFAUpdater-Info.plist";
+		rLen = 0;
+		rLoc = 9223372036854775807;
+	};
+	D08082041288205900712843 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1D3623240D0F684500981E51 /* MFAUpdaterAppDelegate.h */;
+		name = "MFAUpdaterAppDelegate.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 502;
+		vrLoc = 0;
+	};
+	D08082051288205900712843 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 28D7ACF70DDB3853001CB0EB /* MFAUpdaterViewController.m */;
+		name = "MFAUpdaterViewController.m: 16";
+		rLen = 0;
+		rLoc = 370;
+		rType = 0;
+		vrLen = 528;
+		vrLoc = 0;
+	};
+	D08082061288205900712843 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 28D7ACF60DDB3853001CB0EB /* MFAUpdaterViewController.h */;
+		name = "MFAUpdaterViewController.h: 11";
+		rLen = 0;
+		rLoc = 237;
+		rType = 0;
+		vrLen = 335;
+		vrLoc = 0;
+	};
+	D08082071288205900712843 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 28D7ACF60DDB3853001CB0EB /* MFAUpdaterViewController.h */;
+		name = "MFAUpdaterViewController.h: 11";
+		rLen = 0;
+		rLoc = 237;
+		rType = 0;
+		vrLen = 335;
+		vrLoc = 0;
+	};
+	D0DC0B4D12708D14005ED45C /* MFAUpdater */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = MFAUpdater;
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+	};
+	D0DC0B5F12708D25005ED45C /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
+		};
+	};
+	D0DC0B6012708D25005ED45C /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	D0DC0B7412708F16005ED45C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 28D7ACF70DDB3853001CB0EB /* MFAUpdaterViewController.m */;
+		name = "MFAUpdaterViewController.m: 16";
+		rLen = 0;
+		rLoc = 370;
+		rType = 0;
+		vrLen = 528;
+		vrLoc = 0;
+	};
+	D0DC0B7712708F33005ED45C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 28D7ACF60DDB3853001CB0EB /* MFAUpdaterViewController.h */;
+		name = "MFAUpdaterViewController.h: 11";
+		rLen = 0;
+		rLoc = 237;
+		rType = 0;
+		vrLen = 335;
+		vrLoc = 0;
+	};
+	D0DC0B7812708F33005ED45C /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 8D1107310486CEB800E47090 /* MFAUpdater-Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+		);
+		name = "/Users/rbrecher/Documents/Development/MFAUpdater/MFAUpdater-Info.plist";
+		rLen = 0;
+		rLoc = 9223372036854775808;
+	};
+	D0DC0B7912708F33005ED45C /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 8D1107310486CEB800E47090 /* MFAUpdater-Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+		);
+		name = "/Users/rbrecher/Documents/Development/MFAUpdater/MFAUpdater-Info.plist";
+		rLen = 0;
+		rLoc = 9223372036854775808;
+	};
+}
