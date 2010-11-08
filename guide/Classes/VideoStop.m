@@ -46,7 +46,7 @@
 }
 
 - (BOOL)loadStopView
-{
+{	
 	// Get path to video from bundle
 	NSBundle *tourBundle = [[(TapAppDelegate *)[[UIApplication sharedApplication] delegate] currentTourController] tourBundle];
 	NSString *videoSrc = [self getSourcePath];
@@ -76,7 +76,6 @@
 		SplashController *splashController = (SplashController *)[[(TapAppDelegate *)[[UIApplication sharedApplication] delegate] menuController] modalViewController];
 		[splashController presentMoviePlayerViewControllerAnimated:moviePlayerController];
 	}
-//	[tourController presentMoviePlayerViewControllerAnimated:moviePlayerController];
 	[[moviePlayerController moviePlayer] play];
 	[moviePlayerController release];
 	
@@ -95,7 +94,13 @@
 												  object:moviePlayer];
 	// Dismiss video
 	TourController *tourController = [(TapAppDelegate*)[[UIApplication sharedApplication] delegate] currentTourController];
-	[tourController dismissMoviePlayerViewControllerAnimated];
+	if ([tourController parentViewController]) {
+		[tourController dismissMoviePlayerViewControllerAnimated];
+	}
+	else {
+		SplashController *splashController = (SplashController *)[[(TapAppDelegate *)[[UIApplication sharedApplication] delegate] menuController] modalViewController];
+		[splashController dismissMoviePlayerViewControllerAnimated];
+	}
 	
 	// Remove highlight from stop if in a stop group
 	if ([[[tourController navigationController] visibleViewController] isKindOfClass:[StopGroupController class]]) {

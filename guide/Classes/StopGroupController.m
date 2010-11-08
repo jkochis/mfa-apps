@@ -152,6 +152,7 @@
 	[moviePlayerController setShouldAutoplay:YES];
 	[moviePlayerController setControlStyle:MPMovieControlStyleNone];
 	[moviePlayerController setScalingMode:MPMovieScalingModeAspectFill];
+	[moviePlayerController setContentURL:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videoPlayerDurationAvailable:) name:MPMovieDurationAvailableNotification object:moviePlayerController];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videoPlayerPlaybackStateDidChange:) name:MPMoviePlayerPlaybackStateDidChangeNotification object:moviePlayerController];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videoPlayerPlaybackDidFinish:) name:MPMoviePlayerPlaybackDidFinishNotification object:moviePlayerController];
