@@ -47,11 +47,11 @@
 	if ([tours count]) {
 		[toursView reloadData];
 	}
-	else {
+//	else {
 		UIBarButtonItem *updateButton = [[UIBarButtonItem alloc] initWithTitle:@"Update" style:UIBarButtonItemStylePlain target:self action:@selector(updateButtonSelected:)];
 		[[navigationBar topItem] setRightBarButtonItem:updateButton];
 		[updateButton release];
-	}
+//	}
 }
 
 - (void)showUpdater
