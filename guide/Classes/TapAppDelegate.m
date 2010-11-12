@@ -109,7 +109,9 @@ enum {
 	[[UIApplication sharedApplication] setIdleTimerDisabled:YES];
 	
 	// Check documents directory to see if bundles have been manually added
-	[FileSharingManager checkBundles];
+	// This has been disabled because it requires the bundle id to be added to the
+	// TourML file
+//	[FileSharingManager checkBundles];
 	
     // Allocate the sounds
 	CFBundleRef mainBundle = CFBundleGetMainBundle();

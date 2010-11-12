@@ -9,6 +9,7 @@
 - (void)hideControls;
 - (void)cancelControlsTimer;
 
+- (void)checkForAutoplay;
 - (BOOL)audioStopIsVideo:(VideoStop *)audioStop;
 
 - (void)playAudio:(NSString *)audioSrc;
@@ -46,7 +47,9 @@
 
 - (void)dealloc
 {
+	[controlsTimer release];
 	[audioPlayer release];
+	[autoplayTimer release];
 	[updateTimer release];
 	[progressView release];
 	[currentTime release];
@@ -148,10 +151,10 @@
 	// Setup up movie player
 	moviePlayerHolder = [[UIView alloc] initWithFrame:[scrollView frame]];
 	moviePlayerController = [[MPMoviePlayerController alloc] init];
-	[[moviePlayerController view] setFrame:[imageView frame]];
+	[[moviePlayerController view] setFrame:[scrollView frame]];
 	[moviePlayerController setShouldAutoplay:YES];
 	[moviePlayerController setControlStyle:MPMovieControlStyleNone];
-	[moviePlayerController setScalingMode:MPMovieScalingModeAspectFill];
+//	[moviePlayerController setScalingMode:MPMovieScalingModeAspectFill];
 	[moviePlayerController setContentURL:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videoPlayerDurationAvailable:) name:MPMovieDurationAvailableNotification object:moviePlayerController];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videoPlayerPlaybackStateDidChange:) name:MPMoviePlayerPlaybackStateDidChangeNotification object:moviePlayerController];
@@ -176,26 +179,20 @@
 	// Check for intro
 	if (firstRun) {
 		firstRun = NO;
-		BaseStop *refStop = [[self stopGroup] stopAtIndex:0];
-		if ([refStop isKindOfClass:[VideoStop class]] &&
-			[(VideoStop *)refStop isAudio]) {
-			VideoStop *audioStop = (VideoStop *)refStop;
-			NSString *audioSrc = [audioStop getSourcePath];
-			if ([self audioStopIsVideo:audioStop]) {
-				[self playVideo:audioSrc];
-			}
-			else {
-				[self playAudio:audioSrc];
-				[self showControls];
-			}
-			[stopTable selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:YES scrollPosition:UITableViewScrollPositionNone];
+		if (autoplayTimer) {
+			[autoplayTimer invalidate];
 		}
+		autoplayTimer = [[NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(checkForAutoplay) userInfo:nil repeats:NO] retain];
 	}
 	[super viewDidAppear:animated];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+	if (autoplayTimer) {
+		[autoplayTimer invalidate];
+		autoplayTimer = nil;
+	}
 	[self stopAudio];
 	[self stopVideo];
 	[super viewWillDisappear:animated];
@@ -268,7 +265,6 @@
 {
 	if (controlsTimer) {
 		[controlsTimer invalidate];
-		[controlsTimer release];
 		controlsTimer = nil;
 	}	
 }
@@ -346,6 +342,24 @@
 
 #pragma mark -
 #pragma mark Audio Player
+
+- (void)checkForAutoplay
+{
+	BaseStop *refStop = [[self stopGroup] stopAtIndex:0];
+	if ([refStop isKindOfClass:[VideoStop class]] &&
+		[(VideoStop *)refStop isAudio]) {
+		VideoStop *audioStop = (VideoStop *)refStop;
+		NSString *audioSrc = [audioStop getSourcePath];
+		if ([self audioStopIsVideo:audioStop]) {
+			[self playVideo:audioSrc];
+		}
+		else {
+			[self playAudio:audioSrc];
+			[self showControls];
+		}
+		[stopTable selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:YES scrollPosition:UITableViewScrollPositionNone];
+	}
+}
 
 - (BOOL)audioStopIsVideo:(VideoStop *)audioStop
 {
@@ -485,14 +499,6 @@
 	if (![moviePlayerHolder isDescendantOfView:[self view]]) {
 		[[self view] insertSubview:moviePlayerHolder belowSubview:progressView];
 	}
-	if ([moviePlayerHolder alpha] < 1.0f) {
-		[UIView animateWithDuration:0.5f animations:^{
-			[moviePlayerHolder setAlpha:1.0f];
-		}];
-	}
-	
-	// Fade in controls
-	[self showControlsAndFadeOut:4.0f];
 }
 
 - (void)stopVideo
@@ -519,6 +525,13 @@
 
 - (void)videoPlayerPlaybackStateDidChange:(NSNotification *)notification
 {
+	if ([moviePlayerController playbackState] == MPMoviePlaybackStatePlaying &&
+		[moviePlayerHolder alpha] < 1.0f) {
+		[UIView animateWithDuration:0.5f animations:^{
+			[moviePlayerHolder setAlpha:1.0f];
+		}];
+		[self showControlsAndFadeOut:4.0f];
+	}
 	[self updateViewForVideoPlayerState];
 }
 
@@ -687,6 +700,10 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {	
 	// Stop any audio or video
+	if (autoplayTimer) {
+		[autoplayTimer invalidate];
+		autoplayTimer = nil;
+	}
 	[self stopAudio];
 	[self stopVideo];
 	

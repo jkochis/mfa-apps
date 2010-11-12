@@ -52,7 +52,7 @@
 			xmlChar *key = xmlGetProp(child, (xmlChar*)"key");
 			if (key && (strcmp((char*)key, "header-image-portrait") == 0)) {
 				xmlChar *value = xmlGetProp(child, (xmlChar*)"value");
-				NSString *result = [NSString stringWithUTF8String:(char*)value];
+				NSString *result = [[NSString stringWithUTF8String:(char*)value] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 				xmlFree(value);
 				xmlFree(key);
 				return result;
@@ -70,7 +70,7 @@
 			xmlChar *key = xmlGetProp(child, (xmlChar*)"key");
 			if (key && (strcmp((char*)key, "header-image-landscape") == 0)) {
 				xmlChar *value = xmlGetProp(child, (xmlChar*)"value");
-				NSString *result = [NSString stringWithUTF8String:(char*)value];
+				NSString *result = [[NSString stringWithUTF8String:(char*)value] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 				xmlFree(value);
 				xmlFree(key);
 				return result;

@@ -13,8 +13,6 @@
 #import <libxml/xpath.h>
 #import <libxml/xpathInternals.h>
 
-//#define UPDATER_URL @"http://lt-mac-rb.local/tours.xml"
-//#define UPDATER_URL @"http://linux.genuineinteractive.com/mfa-tap/tours.xml"
 #define UPDATER_URL @"http://mfa-newmedia/drupal-6.17/all-tours"
 
 @protocol UpdaterDataProviderDelegate;
