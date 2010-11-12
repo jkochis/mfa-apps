@@ -29,7 +29,7 @@
 				if (tour) {
 					NSDictionary *fileAttributes = [fileManager attributesOfItemAtPath:[documentsDirectory stringByAppendingPathComponent:filename] error:nil];
 					if ([[fileAttributes fileModificationDate] timeIntervalSinceDate:[tour updatedDate]] >= 0) {
-						[CoreDataManager updaterTourUpdatedDate:[fileAttributes fileModificationDate] byId:[tour id]];
+						[CoreDataManager updaterTourUpdatedDate:[NSDate date] byId:[tour id]];
 					}
 				}
 				else {
@@ -49,17 +49,26 @@
 						tourId = [NSNumber numberWithInt:[[NSString stringWithUTF8String:idChars] intValue]];
 						free(idChars);
 					}
+					else {
+						continue;
+					}
 					xmlNodePtr titleNode = [TourMLUtils getTitleInDocument:tourDoc];
 					if (titleNode) {
 						char* titleChars = (char*)xmlNodeGetContent(titleNode);
 						title = [NSString stringWithUTF8String:titleChars];
 						free(titleChars);
 					}
+					else {
+						continue;
+					}
 					xmlNodePtr languageNode = [TourMLUtils getLanguageInDocument:tourDoc];
 					if (languageNode) {
 						char* languageChars = (char*)xmlNodeGetContent(languageNode);
 						language = [NSString stringWithUTF8String:languageChars];
 						free(languageChars);
+					}
+					else {
+						language = @"en";
 					}
 					xmlFreeDoc(tourDoc);
 					[CoreDataManager addOrUpdateTourWithId:tourId 
@@ -72,6 +81,7 @@
 			}
 		}
 	}
+	[fileManager release];
 }
 
 @end

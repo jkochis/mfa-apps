@@ -36,5 +36,7 @@
 	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
+	<key>UIRequiresPersistentWiFi</key>
+	<true/>
 </dict>
 </plist>

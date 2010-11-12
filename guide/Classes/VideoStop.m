@@ -15,7 +15,7 @@
 	for (xmlNodePtr child = stopNode->children; child != NULL; child = child->next) {
 		if (xmlStrEqual(child->name, (xmlChar*)"Source")) {
 			char *src = (char*)xmlNodeGetContent(child);
-			NSString *result = [NSString stringWithUTF8String:src];
+			NSString *result = [[NSString stringWithUTF8String:src] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 			free(src);
 			return result;
 		}

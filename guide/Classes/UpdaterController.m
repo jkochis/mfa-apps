@@ -387,7 +387,14 @@ enum {
 
 - (void)updater:(Updater *)theUpdater didFailWithError:(NSError *)error
 {
-	[self addToConsole:[NSString stringWithFormat:@"Error: %@", [error localizedDescription]]];
+	[self addToConsole:@"-- Error ----------"];
+	[self addToConsole:[NSString stringWithFormat:@"Code: %ld", [error code]]];
+	[self addToConsole:[NSString stringWithFormat:@"Domain: %@", [error domain]]];
+	[self addToConsole:[NSString stringWithFormat:@"User Info: %@", [error userInfo]]];
+	[self addToConsole:[NSString stringWithFormat:@"Description: %@", [error localizedDescription]]];
+	[self addToConsole:[NSString stringWithFormat:@"Recovery Options: %@", [error localizedRecoveryOptions]]];
+	[self addToConsole:[NSString stringWithFormat:@"Recovery Suggestions: %@", [error localizedRecoverySuggestion]]];
+	[self addToConsole:[NSString stringWithFormat:@"Failure Reason: %@", [error localizedFailureReason]]];
 }
 
 - (void)updaterDidFailToRetrieveToursXML:(Updater *)updater

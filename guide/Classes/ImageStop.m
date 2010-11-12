@@ -10,7 +10,7 @@
 	for (xmlNodePtr child = stopNode->children; child != NULL; child = child->next) {
 		if (xmlStrEqual(child->name, (xmlChar*)"Source")) {
 			char *source = (char*)xmlNodeGetContent(child);
-			NSString *result = [NSString stringWithUTF8String:source];
+			NSString *result = [[NSString stringWithUTF8String:source] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 			free(source);
 			return result;
 		}

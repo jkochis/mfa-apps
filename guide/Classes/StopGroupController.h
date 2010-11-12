@@ -24,6 +24,7 @@
 	NSTimer *controlsTimer;
 	
 	AVAudioPlayer *audioPlayer;
+	NSTimer *autoplayTimer;
 	NSTimer *updateTimer;
 	
 	UIView *moviePlayerHolder;
