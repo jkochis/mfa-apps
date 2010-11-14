@@ -109,9 +109,7 @@ enum {
 	[[UIApplication sharedApplication] setIdleTimerDisabled:YES];
 	
 	// Check documents directory to see if bundles have been manually added
-	// This has been disabled because it requires the bundle id to be added to the
-	// TourML file
-//	[FileSharingManager checkBundles];
+	[FileSharingManager checkBundles];
 	
     // Allocate the sounds
 	CFBundleRef mainBundle = CFBundleGetMainBundle();
@@ -138,18 +136,22 @@ enum {
 	
 	// Start updates
 	[self scheduleBackgroundUpdates];
-		
+	
     [window makeKeyAndVisible];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-	
+	if ([[self backgroundUpdater] isUpdating]) {
+		[backgroundUpdater cancel];
+	}
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-	
+	// Check documents directory to see if bundles have been manually added
+	[FileSharingManager checkBundles];
+	[menuController refresh];
 }
 
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
