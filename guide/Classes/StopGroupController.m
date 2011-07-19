@@ -21,6 +21,7 @@
 - (void)playVideo:(NSString *)videoSrc;
 - (void)stopVideo;
 - (void)hideVideo;
+- (void)updateViewForVideoPlayerDimensions;
 - (void)updateViewForVideoPlayerInfo;
 - (void)updateViewForVideoPlayerState;
 - (void)updateCurrentTimeForVideoPlayer;
@@ -156,6 +157,7 @@
 	[moviePlayerController setControlStyle:MPMovieControlStyleNone];
 //	[moviePlayerController setScalingMode:MPMovieScalingModeAspectFill];
 	[moviePlayerController setContentURL:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videoPlayerNaturalSizeAvailable:) name:MPMovieNaturalSizeAvailableNotification object:moviePlayerController];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videoPlayerDurationAvailable:) name:MPMovieDurationAvailableNotification object:moviePlayerController];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videoPlayerPlaybackStateDidChange:) name:MPMoviePlayerPlaybackStateDidChangeNotification object:moviePlayerController];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videoPlayerPlaybackDidFinish:) name:MPMoviePlayerPlaybackDidFinishNotification object:moviePlayerController];
@@ -511,11 +513,20 @@
 	[self stopVideo];
 	if ([moviePlayerHolder isDescendantOfView:[self view]]) {
 		[UIView animateWithDuration:0.5f animations:^{
+			[[moviePlayerController view] setFrame:[scrollView frame]];
 			[moviePlayerHolder setAlpha:0.0f];
+			[moviePlayerHolder setFrame:[scrollView frame]];
+			[volumeView setFrame:CGRectMake(0, scrollView.frame.size.height - volumeView.frame.size.height, volumeView.frame.size.width, volumeView.frame.size.height)];
+			[stopTable setFrame:CGRectMake(0, scrollView.frame.origin.y + scrollView.frame.size.height, self.view.frame.size.width, self.view.frame.size.height - scrollView.frame.size.height)];
 		} completion:^(BOOL finished) {
 			[moviePlayerHolder removeFromSuperview];
 		}];
 	}
+}
+
+- (void)videoPlayerNaturalSizeAvailable:(NSNotification *)notification
+{
+	[self updateViewForVideoPlayerDimensions];
 }
 
 - (void)videoPlayerDurationAvailable:(NSNotification *)notification
@@ -538,6 +549,20 @@
 - (void)videoPlayerPlaybackDidFinish:(NSNotification *)notification
 {
 	[self updateViewForVideoPlayerState];
+	[self hideControls];
+	[self hideVideo];
+	[stopTable deselectRowAtIndexPath:[stopTable indexPathForSelectedRow] animated:YES];
+}
+
+- (void)updateViewForVideoPlayerDimensions
+{
+	CGFloat movieHeight = self.view.frame.size.width / moviePlayerController.naturalSize.width * moviePlayerController.naturalSize.height;
+	[UIView animateWithDuration:0.5f animations:^{
+		[[moviePlayerController view] setFrame:CGRectMake(moviePlayerController.view.frame.origin.x, moviePlayerController.view.frame.origin.y, moviePlayerController.view.frame.size.width, movieHeight)];
+		[moviePlayerHolder setFrame:CGRectMake(moviePlayerHolder.frame.origin.x, moviePlayerHolder.frame.origin.y, moviePlayerHolder.frame.size.width, movieHeight)];
+		[volumeView setFrame:CGRectMake(0, moviePlayerHolder.frame.size.height - volumeView.frame.size.height, volumeView.frame.size.width, volumeView.frame.size.height)];
+		[stopTable setFrame:CGRectMake(0, moviePlayerHolder.frame.origin.y + moviePlayerHolder.frame.size.height, self.view.frame.size.width, self.view.frame.size.height - moviePlayerHolder.frame.size.height)];
+	}];
 }
 
 - (void)updateViewForVideoPlayerInfo

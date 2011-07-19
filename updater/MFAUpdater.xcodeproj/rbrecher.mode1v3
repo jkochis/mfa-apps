@@ -230,8 +230,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -310,6 +308,8 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -327,13 +327,13 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>D08082071288205900712843</string>
+										<string>D0935EDF1369A4F0004616E0</string>
 										<key>history</key>
 										<array>
 											<string>D08082031288205900712843</string>
 											<string>D08082041288205900712843</string>
 											<string>D08082051288205900712843</string>
-											<string>D08082061288205900712843</string>
+											<string>D08082071288205900712843</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -345,14 +345,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1232, 587}}</string>
+								<string>{{0, 0}, {1232, 582}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 59 1440 819 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>587pt</string>
+							<string>582pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -365,14 +365,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 592}, {1232, 186}}</string>
+								<string>{{0, 587}, {1232, 191}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 59 1440 819 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>186pt</string>
+							<string>191pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -391,9 +391,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>D08082081288205900712843</string>
+				<string>D0935EDC1369A0DC004616E0</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>D08082091288205900712843</string>
+				<string>D0935EDD1369A0DC004616E0</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -531,8 +531,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C78EAAD065D492600B07095</string>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>D0DC0B5D12708D25005ED45C</string>
 		<string>/Users/rbrecher/Documents/Development/MFAGuide/updater/MFAUpdater.xcodeproj</string>
 	</array>
@@ -614,7 +612,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>D0DC0B5D12708D25005ED45C</string>
-				<string>D080820A1288205900712843</string>
+				<string>D0935EDE1369A0DC004616E0</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
