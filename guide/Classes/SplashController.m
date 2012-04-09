@@ -187,7 +187,12 @@
 
 - (IBAction)backTouchUpInside:(UIButton *)sender
 {
-	[[self parentViewController] dismissModalViewControllerAnimated:YES];
+	if ([[[UIDevice currentDevice] systemVersion] doubleValue] < 5.0) {
+		[[self parentViewController] dismissModalViewControllerAnimated:YES];
+	}
+	else {
+		[[self presentingViewController] dismissModalViewControllerAnimated:YES];
+	}
 }
 
 - (IBAction)enterTouchUpInside:(UIButton *)sender
