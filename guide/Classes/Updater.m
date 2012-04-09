@@ -201,9 +201,6 @@
 	updatableTours = [[NSMutableArray alloc] init];
 	for (ToursXMLTour *remoteTour in remoteTours)
 	{
-		
-		if ([[remoteTour id] intValue] == 77) {
-		
 		// Get tour from CoreData, and if not present add to queue
 		Tour *localTour = [CoreDataManager getTourById:[remoteTour id]];
 		if (!localTour) {
@@ -227,8 +224,6 @@
 					[updatableTours addObject:remoteTour];
 				}
 			}
-		}
-			
 		}
 	}
 	
