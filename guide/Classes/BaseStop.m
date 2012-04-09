@@ -7,7 +7,7 @@
 
 - (id)initWithStopNode:(xmlNodePtr)stop
 {
-	if (self = [super init]) {
+	if ((self = [super init])) {
 		[self setStopNode:stop];
 	}
 	
@@ -62,6 +62,25 @@
 {
 	// Default case if we get here
 	return [[NSBundle mainBundle] pathForResource:@"icon-webpage" ofType:@"png"];
+}
+
+- (NSDate *)getUpdateDate
+{
+	NSDate *updateDate = nil;
+	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+	[dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+	for (xmlNodePtr child = stopNode->children; child != NULL; child = child->next) {
+		if (xmlStrEqual(child->name, (xmlChar*)"UpdateDate")) {
+			char *desc = (char*)xmlNodeGetContent(child);
+			NSString *result = [NSString stringWithUTF8String:desc];
+			updateDate = [dateFormatter dateFromString:result];
+			free(desc);
+			break;
+		}
+	}
+	[dateFormatter release];
+	
+	return updateDate;
 }
 
 - (NSArray *)getAllFiles

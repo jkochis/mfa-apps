@@ -34,6 +34,7 @@ enum {
 
 - (void)getToursFromCoreData;
 - (void)updateAll;
+- (void)updateQuick;
 - (void)updateProgressForCurrentBundle:(NSUInteger)fileNumber outOf:(NSUInteger)totalFiles;
 - (void)setCurrentBundleAsUpdated;
 - (UpdaterControllerCell *)cellForBundleName:(NSString *)bundleName;
@@ -205,6 +206,15 @@ enum {
 {
 	encounteredErrors = NO;
 	[updater performUpdate];
+	[utilityButton setEnabled:YES];
+	[utilityButton setTitle:@"Cancel"];
+	utilityButtonAction = kCancelAction;
+}
+
+- (void)updateQuick
+{
+	encounteredErrors = NO;
+	[updater performUpdate:YES];
 	[utilityButton setEnabled:YES];
 	[utilityButton setTitle:@"Cancel"];
 	utilityButtonAction = kCancelAction;
@@ -387,14 +397,8 @@ enum {
 
 - (void)updater:(Updater *)theUpdater didFailWithError:(NSError *)error
 {
+	[self addToConsole:[NSString stringWithFormat:@"%@", [error localizedDescription]]];
 	[self addToConsole:@"-- Error ----------"];
-	[self addToConsole:[NSString stringWithFormat:@"Code: %ld", [error code]]];
-	[self addToConsole:[NSString stringWithFormat:@"Domain: %@", [error domain]]];
-	[self addToConsole:[NSString stringWithFormat:@"User Info: %@", [error userInfo]]];
-	[self addToConsole:[NSString stringWithFormat:@"Description: %@", [error localizedDescription]]];
-	[self addToConsole:[NSString stringWithFormat:@"Recovery Options: %@", [error localizedRecoveryOptions]]];
-	[self addToConsole:[NSString stringWithFormat:@"Recovery Suggestions: %@", [error localizedRecoverySuggestion]]];
-	[self addToConsole:[NSString stringWithFormat:@"Failure Reason: %@", [error localizedFailureReason]]];
 }
 
 - (void)updaterDidFailToRetrieveToursXML:(Updater *)updater
@@ -414,12 +418,12 @@ enum {
 {
 	if (availableUpdates) {
 		[self checkUpdatableTours:[theUpdater updatableTours]];
-		[self addToConsole:[NSString stringWithFormat:@"%lu updates available", availableUpdates]];
+		[self addToConsole:[NSString stringWithFormat:@"%u updates available", availableUpdates]];
 		UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Available Updates" 
 															message:@"Would you like to update now?" 
 														   delegate:self 
 												  cancelButtonTitle:@"No" 
-												  otherButtonTitles:@"Yes", nil];
+												  otherButtonTitles:@"Full Update", @"Quick Update", nil];
 		[alertView setTag:kUpdatesAvailableAlert];
 		[alertView show];
 		[alertView release];
@@ -452,33 +456,51 @@ enum {
 	[self addToConsole:[NSString stringWithFormat:@"Finished Bundle: %@", bundleName]];
 }
 
-- (void)updater:(Updater *)theUpdater didStartUpdatingFile:(NSString *)pathToFile fileNumber:(NSUInteger)fileNumber outOf:(NSUInteger)totalFiles
+- (void)updater:(Updater *)theUpdater didRemoveBundle:(NSString *)bundleName
+{
+	[self addToConsole:[NSString stringWithFormat:@"Removed Bundle: %@", bundleName]];
+}
+
+- (void)updater:(Updater *)theUpdater didFailToRemoveBundle:(NSString *)bundleName withError:(NSError *)error
+{
+	[self addToConsole:[NSString stringWithFormat:@"Code: %d", [error code]]];
+	[self addToConsole:[NSString stringWithFormat:@"Bundle: %@", bundleName]];
+	[self addToConsole:@"-- Error Removing Bundle ----------"];
+}
+
+- (void)updater:(Updater *)theUpdater didStartUpdatingFile:(NSString *)filePath fileNumber:(NSUInteger)fileNumber outOf:(NSUInteger)totalFiles
 {
 	if (fileNumber == 1) {
 		[self updateProgressForCurrentBundle:0 outOf:totalFiles];
 	}
 	[progress setHidden:NO];
-	[progressFilename setText:[pathToFile lastPathComponent]];
+	[progressFilename setText:[filePath lastPathComponent]];
 	[progressView setProgress:0.0f];
+	[progressAmount setText:@"Checking Remote..."];
 }
 
-- (void)updater:(Updater *)theUpdater didRecieveBytes:(NSInteger)bytes outOfTotalBytes:(NSInteger)totalBytes forFile:(NSString *)pathToFile
+- (void)updater:(Updater *)theUpdater didRecieveBytes:(NSInteger)bytes outOfTotalBytes:(NSInteger)totalBytes forFile:(NSString *)filePath
 {
-	[progressView setProgress:(float)bytes/(float)totalBytes];
+	[progressView setProgress:(float)bytes / (float)totalBytes];
 	[progressAmount setText:[NSString stringWithFormat:@"%@ / %@", [self stringForFileSize:bytes], [self stringForFileSize:totalBytes]]];
 }
 
-- (void)updater:(Updater *)theUpdater didFinishUpdatingFile:(NSString *)pathToFile fileNumber:(NSUInteger)fileNumber outOf:(NSUInteger)totalFiles
+- (void)updater:(Updater *)theUpdater didFinishUpdatingFile:(NSString *)filePath fileNumber:(NSUInteger)fileNumber outOf:(NSUInteger)totalFiles
 {	
 	[self updateProgressForCurrentBundle:fileNumber outOf:totalFiles];
-	[self addToConsole:[NSString stringWithFormat:@"Updated: %@", pathToFile]];
+//	[self addToConsole:[NSString stringWithFormat:@"Updated: %@", filePath]];
+}
+
+- (void)updater:(Updater *)theUpdater didRemoveFile:(NSString *)filePath
+{
+//	[self addToConsole:[NSString stringWithFormat:@"Removed: %@", filePath]];
 }
 
 - (void)updaterDidFinish:(Updater *)theUpdater
 {	
 	if (encounteredErrors) {
 		
-		// alert for errors
+		// Alert for errors
 		UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Errors Encountered" 
 															message:@"Please check the console for details." 
 														   delegate:self 
@@ -488,20 +510,20 @@ enum {
 		[alertView show];
 		[alertView release];
 		
-		// enable update button
+		// Enable update button
 		[utilityButton setEnabled:YES];
 		[utilityButton setTitle:@"Check for Updates"];
 		utilityButtonAction = kCheckForUpdatesAction;
 	}
 	else {
 		
-		// disable update button
+		// Disable update button
 		[utilityButton setEnabled:NO];
 		[utilityButton setTitle:@"Update"];
 		utilityButtonAction = kNoAction;
 	}
 	
-	// complete update
+	// Complete update
 	[self completeUpdate];
 	[self addToConsole:@"Done!"];
 	[progress setHidden:YES];
@@ -530,6 +552,9 @@ enum {
 		case kUpdatesAvailableAlert: {
 			if (buttonIndex == 1) {
 				[self updateAll];
+			}
+			else if (buttonIndex == 2) {
+				[self updateQuick];
 			}
 			else {
 				[utilityButton setEnabled:YES];

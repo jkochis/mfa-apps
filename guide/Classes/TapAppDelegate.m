@@ -174,18 +174,25 @@ enum {
 {	
 	[[UIApplication sharedApplication] cancelAllLocalNotifications];
 	
-	unsigned unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit;
-	UILocalNotification *localNotification = [[UILocalNotification alloc] init];
+	// generate a unique number using the device's UDID 
+	NSScanner *scanner = [NSScanner scannerWithString:[[[UIDevice currentDevice] uniqueIdentifier] substringToIndex:6]];
+	unsigned int value;
+	[scanner scanHexInt:&value];
+	
+	// create date for recurring update check
+	unsigned unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit | NSWeekdayCalendarUnit;
 	NSDate *date = [NSDate date];
 	NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:unitFlags fromDate:date];
 	[dateComponents setHour:22];
 	[dateComponents setMinute:0];
 	NSDate *fireDate = [[NSCalendar currentCalendar] dateFromComponents:dateComponents];
-	NSScanner *scanner = [NSScanner scannerWithString:[[[UIDevice currentDevice] uniqueIdentifier] substringToIndex:5]];
-	unsigned long long value;
-	[scanner scanHexLongLong:&value];
-	[localNotification setFireDate:[fireDate dateByAddingTimeInterval:60 * UPDATE_INTERVAL * (value % UPDATE_GROUPS)]];
-	[localNotification setRepeatInterval:NSDayCalendarUnit];
+	fireDate = [fireDate dateByAddingTimeInterval:60 * 60 * 24 * ((int)(value % 7) - [dateComponents weekday] + 1)];
+	fireDate = [fireDate dateByAddingTimeInterval:60 * UPDATE_INTERVAL * (value % UPDATE_GROUPS)];
+	
+	// schedule local notification
+	UILocalNotification *localNotification = [[UILocalNotification alloc] init];
+	[localNotification setFireDate:fireDate];
+	[localNotification setRepeatInterval:NSWeekCalendarUnit];
 	[localNotification setAlertBody:@"Perform automatic update for MFA Tours?"];
 	[localNotification setAlertAction:@"Update"];
 	[localNotification setUserInfo:[NSDictionary dictionaryWithObject:@"update" forKey:@"action"]];

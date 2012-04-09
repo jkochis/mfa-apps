@@ -8,7 +8,6 @@
 
 #import "CoreDataManager.h"
 
-
 @implementation CoreDataManager
 
 #pragma mark -
@@ -75,7 +74,9 @@ static CoreDataManager *sharedUpdatedCoreDataManager = nil;
     if (managedObjectModel != nil) {
         return managedObjectModel;
     }
-    managedObjectModel = [[NSManagedObjectModel mergedModelFromBundles:nil] retain];    
+	NSString *path = [[NSBundle mainBundle] pathForResource:@"Tours" ofType:@"momd"];
+    NSURL *momURL = [NSURL fileURLWithPath:path];
+    managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:momURL];
     return managedObjectModel;
 }
 
@@ -86,9 +87,13 @@ static CoreDataManager *sharedUpdatedCoreDataManager = nil;
     }
 	NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
 	NSURL *storeUrl = [NSURL fileURLWithPath: [documentsDirectory stringByAppendingPathComponent: @"Tours.sqlite"]];
+	NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+							 [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
+							 [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, 
+							 nil];
 	NSError *error = nil;
     persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if (![persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:nil error:&error]) {
+    if (![persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:options error:&error]) {
 		NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
 		abort();
     }    
@@ -103,6 +108,9 @@ static CoreDataManager *sharedUpdatedCoreDataManager = nil;
 	NSManagedObjectContext *managedObjectContext = [[CoreDataManager sharedManager] managedObjectContext];
 	NSFetchRequest *request = [[[NSFetchRequest alloc] init] autorelease];
 	[request setEntity:[NSEntityDescription entityForName:@"Tour" inManagedObjectContext:managedObjectContext]];
+//	[request setSortDescriptors:[NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:@"sortWeight" ascending:YES], 
+//														  [NSSortDescriptor sortDescriptorWithKey:@"title" ascending:YES], 
+//														  nil]];
 	NSArray *results = [managedObjectContext executeFetchRequest:request error:nil];
 	if (!results || ![results count]) {
 		return nil;
@@ -141,6 +149,7 @@ static CoreDataManager *sharedUpdatedCoreDataManager = nil;
 					 bundleName:(NSString *)bundleName 
 					   language:(NSString *)language 
 					updatedDate:(NSDate *)updatedDate 
+					 sortWeight:(NSNumber *)sortWeight
 						 errors:(BOOL)errors
 {
 	NSManagedObjectContext *managedObjectContext = [[CoreDataManager sharedManager] managedObjectContext];
@@ -153,6 +162,7 @@ static CoreDataManager *sharedUpdatedCoreDataManager = nil;
 	[tour setBundleName:bundleName];
 	[tour setLanguage:language];
 	[tour setUpdatedDate:updatedDate];
+	[tour setSortWeight:sortWeight];
 	[tour setErrors:[NSNumber numberWithBool:errors]];
 	NSError *error;
 	if (![managedObjectContext save:&error]) {
@@ -162,18 +172,53 @@ static CoreDataManager *sharedUpdatedCoreDataManager = nil;
 	return tour;
 }
 
-+ (BOOL)updaterTourUpdatedDate:(NSDate *)updatedDate byId:(NSNumber *)tourId
++ (BOOL)updateTour:(Tour *)tour
 {
 	NSManagedObjectContext *managedObjectContext = [[CoreDataManager sharedManager] managedObjectContext];
-	NSFetchRequest *request = [[[NSFetchRequest alloc] init] autorelease];
-	[request setEntity:[NSEntityDescription entityForName:@"Tour" inManagedObjectContext:managedObjectContext]];
-	[request setPredicate:[NSPredicate predicateWithFormat:@"id == %@", tourId]];
-	NSArray *results = [managedObjectContext executeFetchRequest:request error:nil];
-	if (!results || ![results count]) {
+	NSError *error;
+	if (![managedObjectContext save:&error]) {
+		NSLog(@"%@", [error localizedDescription]);
 		return NO;
 	}
-	Tour *tour = [results objectAtIndex:0];
+	return YES;
+}
+
++ (BOOL)updateTourUpdatedDate:(NSDate *)updatedDate byId:(NSNumber *)tourId
+{
+	NSManagedObjectContext *managedObjectContext = [[CoreDataManager sharedManager] managedObjectContext];
+	Tour *tour = [CoreDataManager getTourById:tourId];
+	if (!tour) {
+		return NO;
+	}
 	[tour setUpdatedDate:updatedDate];
+	NSError *error;
+	if (![managedObjectContext save:&error]) {
+		NSLog(@"%@", [error localizedDescription]);
+		return NO;
+	}
+	return YES;
+}
+
++ (BOOL)updateTourSortWeight:(NSNumber *)sortWeight byId:(NSNumber *)tourId
+{
+	NSManagedObjectContext *managedObjectContext = [[CoreDataManager sharedManager] managedObjectContext];
+	Tour *tour = [CoreDataManager getTourById:tourId];
+	if (!tour) {
+		return NO;
+	}
+	[tour setSortWeight:sortWeight];
+	NSError *error;
+	if (![managedObjectContext save:&error]) {
+		NSLog(@"%@", [error localizedDescription]);
+		return NO;
+	}
+	return YES;
+}
+
++ (BOOL)removeTour:(Tour *)tour
+{
+	NSManagedObjectContext *managedObjectContext = [[CoreDataManager sharedManager] managedObjectContext];
+	[managedObjectContext deleteObject:tour];
 	NSError *error;
 	if (![managedObjectContext save:&error]) {
 		NSLog(@"%@", [error localizedDescription]);

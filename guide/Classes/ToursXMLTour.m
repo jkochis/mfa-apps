@@ -11,6 +11,6 @@
 
 @implementation ToursXMLTour
 
-@synthesize id, title, bundleName, bundleTourML, language, updatedDate;
+@synthesize id, title, bundleName, bundleTourML, language, updatedDate, sortWeight;
 
 @end

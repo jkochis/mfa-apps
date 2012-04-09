@@ -77,9 +77,10 @@
 {	
 	// Calculate table height
 	UIImage *background = [UIImage imageNamed:@"table-cell-bg.png"];
-	CGFloat tableHeight = [[self stopGroup] numberOfStops] * background.size.height;
+	NSInteger numberOfStops = [[self stopGroup] numberOfStops];
+	CGFloat tableHeight = numberOfStops	* background.size.height;
 	
-	// Set up header image
+	// Set up header image, try portrait image first but get landscape image if portrait isn't available
 	NSString *headerImageSrc = [stopGroup getHeaderPortraitImage];
 	if (headerImageSrc == nil) {
 		headerImageSrc = [stopGroup getHeaderLandscapeImage];
@@ -98,17 +99,20 @@
 		CGFloat scale = scrollView.frame.size.width / imageView.image.size.width;
 		
 		// Setup scroll view
-		if (self.view.frame.size.height - tableHeight > imageView.image.size.height * scale) {
+		if (self.view.frame.size.height - imageView.image.size.height * scale >= tableHeight) {
 			[scrollView setFrame:CGRectMake(0, 0, scrollView.frame.size.width, imageView.image.size.height * scale)];
 			lastRowNeedsPadding = ((self.view.frame.size.height - tableHeight) - (imageView.image.size.height * scale)) > background.size.height;
 		}
 		else {
+			if (numberOfStops > 5) {
+				tableHeight = background.size.height * 5;
+			}
 			[scrollView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - tableHeight)];
 			lastRowNeedsPadding = YES;
 		}
 		[scrollView setBackgroundColor:[UIColor blackColor]];
-		[scrollView setMinimumZoomScale: scale];
-		[scrollView setMaximumZoomScale: scale];
+		[scrollView setMinimumZoomScale:scale];
+		[scrollView setMaximumZoomScale:scale];
 		[scrollView setZoomScale:scale];
 		[scrollView setContentSize:imageView.frame.size];
 		if (imageView.frame.size.height > scrollView.frame.size.height) {
@@ -123,13 +127,17 @@
 		[scrollView setHidden:YES];
 	}
 	
-	// Set up table
-	[stopTableShadow setFrame:[stopTableShadow bounds]];
-	[stopTable addSubview:stopTableShadow];
+	// Setup table
 	[stopTable setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"table-bg.png"]]];
 	[stopTable setRowHeight:[background size].height];
 	[stopTable setFrame:CGRectMake(0, scrollView.frame.origin.y + scrollView.frame.size.height, self.view.frame.size.width, self.view.frame.size.height - scrollView.frame.size.height)];
-	[stopTable setScrollEnabled:NO];
+	if (stopTable.frame.size.height < numberOfStops * background.size.height) {
+		[stopTable setScrollEnabled:YES];
+	}
+	
+	// Setup shadow
+	[stopTableShadow setFrame:CGRectMake(stopTable.frame.origin.x, stopTable.frame.origin.y, stopTableShadow.frame.size.width, stopTableShadow.frame.size.height)];
+	[[self view] insertSubview:stopTableShadow aboveSubview:stopTable];
 	
 	// Setup audio controls
 	[progressView setFlipped:YES];
@@ -137,10 +145,6 @@
 	[progressBar setMinimumTrackImage:[UIImage imageNamed:@"audio-slider-maximum.png"] forState:UIControlStateNormal];
 	[progressBar setThumbImage:[UIImage imageNamed:@"audio-handle.png"] forState:UIControlStateNormal];
 	[volumeView setFrame:CGRectMake(0, scrollView.frame.size.height - volumeView.frame.size.height, volumeView.frame.size.width, volumeView.frame.size.height)];
-//	[volumeSlider setMaximumTrackImage:[UIImage imageNamed:@"audio-slider-minimum.png"] forState:UIControlStateNormal];
-//	[volumeSlider setMinimumTrackImage:[UIImage imageNamed:@"audio-slider-maximum.png"] forState:UIControlStateNormal];
-//	[volumeSlider setThumbImage:[UIImage imageNamed:@"audio-handle.png"] forState:UIControlStateNormal];
-//	[volumeSlider setHidden:YES];
 
 	// Replace volume slider with MPVolumeView so it's tied to the system audio
 	MPVolumeView *systemVolumeSlider = [[MPVolumeView alloc] initWithFrame:[volumeSlider frame]];
@@ -184,8 +188,14 @@
 		if (autoplayTimer) {
 			[autoplayTimer invalidate];
 		}
-		autoplayTimer = [[NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(checkForAutoplay) userInfo:nil repeats:NO] retain];
+		autoplayTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(checkForAutoplay) userInfo:nil repeats:NO];
 	}
+	
+	// Flash scroll bars
+	if ([stopTable isScrollEnabled]) {
+		[stopTable flashScrollIndicators];
+	}
+	
 	[super viewDidAppear:animated];
 }
 
@@ -249,11 +259,15 @@
 	if (controlsTimer) {
 		[controlsTimer invalidate];
 	}
-	controlsTimer = [[NSTimer scheduledTimerWithTimeInterval:2.5f target:self selector:@selector(hideControls) userInfo:nil repeats:NO] retain];
+	controlsTimer = [NSTimer scheduledTimerWithTimeInterval:2.5f target:self selector:@selector(hideControls) userInfo:nil repeats:NO];
 }
 
 - (void)hideControls
 {
+	// Cleanup controls timer since it automatically release
+	controlsTimer = nil;
+	
+	// Fade out controls
 	[UIView animateWithDuration:0.25f animations:^{
 		[progressView setAlpha:0.0f];
 		[volumeView setAlpha:0.0f];
@@ -347,6 +361,10 @@
 
 - (void)checkForAutoplay
 {
+	// Cleanup autoplay timer since it is automatically released
+	autoplayTimer = nil;
+	
+	// Check type of first stop to determine if it should autoplay
 	BaseStop *refStop = [[self stopGroup] stopAtIndex:0];
 	if ([refStop isKindOfClass:[VideoStop class]] &&
 		[(VideoStop *)refStop isAudio]) {
@@ -401,6 +419,10 @@
 	}
 	
 	// Play sound
+	if (audioPlayer) {
+		[audioPlayer stop];
+		[audioPlayer release];
+	}
 	audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:audioUrl error:nil];
 	if (audioPlayer) {
 		[audioPlayer play];
@@ -647,16 +669,6 @@
 		[[cell textLabel] setBackgroundColor:[UIColor clearColor]];
 		[[cell textLabel] setFont:[UIFont systemFontOfSize:18]];
 		[[cell textLabel] setTextColor:[UIColor whiteColor]];
-		
-		// Init the description
-//		[[cell detailTextLabel] setFont:[UIFont systemFontOfSize:12]];
-//		[[cell detailTextLabel] setTextColor:[UIColor whiteColor]];
-//		[[cell detailTextLabel] setNumberOfLines:2];
-		
-		// Set the custom disclosure indicator
-//		UIImageView *disclosure = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"table-cell-disclosure.png"]];
-//		[cell setAccessoryView:disclosure];
-//		[disclosure release];
 	}
 	
 	// Set the title
@@ -669,9 +681,6 @@
 	else {
 		[cell setAccessoryView:nil];
 	}
-	
-	// Set the description if available
-	//[[cell detailTextLabel] setText:[refStop getDescription]];
 	
 	// Set the associated icon
 	[[cell imageView] setImage:[UIImage imageWithContentsOfFile:[refStop getIconPath]]];

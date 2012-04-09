@@ -69,7 +69,7 @@
 
 - (void)updater:(Updater *)theUpdater hasAvailableUpdates:(NSUInteger)availableUpdates
 {
-	NSLog(@"%lu updates available.", availableUpdates);
+	NSLog(@"%u updates available.", availableUpdates);
 	if (availableUpdates) {
 		NSLog(@"Performing updates...");
 		[updater performUpdate];
@@ -84,17 +84,32 @@
 
 - (void)updater:(Updater *)theUpdater didStartUpdatingBundle:(NSString *)bundleName
 {
-	NSLog(@"Updating bundle %@", bundleName);
+	NSLog(@"Updating bundle %@...", bundleName);
 }
 
 - (void)updater:(Updater *)theUpdater didFinishUpdatingBundle:(NSString *)bundleName
 {
-	NSLog(@"Finished updating bundle %@", bundleName);
+	NSLog(@"Finished updating bundle %@.", bundleName);
 }
 
-- (void)updater:(Updater *)theUpdater didFinishUpdatingFile:(NSString *)pathToFile fileNumber:(NSUInteger)fileNumber outOf:(NSUInteger)totalFiles
+- (void)updater:(Updater *)updater didRemoveBundle:(NSString *)bundleName
 {
-	NSLog(@"Updated: %@ (%lu of %lu)", pathToFile, fileNumber, totalFiles);
+	NSLog(@"Removed bundle %@.", bundleName);
+}
+
+- (void)updater:(Updater *)updater didFailToRemoveBundle:(NSString *)bundleName withError:(NSError *)error
+{
+	NSLog(@"Failed to remove bundle %@.", bundleName);
+}
+
+- (void)updater:(Updater *)theUpdater didFinishUpdatingFile:(NSString *)filePath fileNumber:(NSUInteger)fileNumber outOf:(NSUInteger)totalFiles
+{
+	NSLog(@"Updated: %@ (%u of %u)", filePath, fileNumber, totalFiles);
+}
+
+- (void)updater:(Updater *)theUpdater didRemoveFile:(NSString *)filePath
+{
+	NSLog(@"Removed: %@", filePath);
 }
 
 - (void)updaterDidFinish:(Updater *)theUpdater;

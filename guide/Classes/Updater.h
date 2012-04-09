@@ -22,9 +22,13 @@
 	UpdaterDataProvider *dataProvider;
 	BOOL checking;
 	
+	BOOL quickUpdate;
+	BOOL recheckCurrentTour;
 	HTTPBundleManager *bundleManager;
 	NSArray *availableTours;
 	NSMutableArray *updatableTours;
+	NSMutableArray *removableTours;
+	NSMutableArray *filesWithErrors;
 	
 	BOOL encounteredErrors;
 }
@@ -32,10 +36,13 @@
 @property (nonatomic, retain) id delegate;
 @property (nonatomic, readonly, getter=isChecking) BOOL checking;
 @property (nonatomic, retain) NSMutableArray *updatableTours;
+@property (nonatomic, retain) NSMutableArray *removableTours;
+@property (nonatomic, retain) NSMutableArray *filesWithErrors;
 @property (nonatomic, readonly, getter=didEncounterErrors) BOOL encounteredErrors;
 
 - (void)checkForUpdates;
 - (void)performUpdate;
+- (void)performUpdate:(BOOL)quick;
 - (void)cancel;
 
 @end
@@ -48,11 +55,14 @@
 
 @optional
 
-- (void)updater:(Updater *)updater didStartUpdatingFile:(NSString *)pathToFile fileNumber:(NSUInteger)fileNumber outOf:(NSUInteger)totalFiles;
-- (void)updater:(Updater *)updater didRecieveBytes:(NSInteger)bytes outOfTotalBytes:(NSInteger)totalBytes forFile:(NSString *)pathToFile;
-- (void)updater:(Updater *)updater didFinishUpdatingFile:(NSString *)pathToFile fileNumber:(NSUInteger)fileNumber outOf:(NSUInteger)totalFiles;
+- (void)updater:(Updater *)updater didStartUpdatingFile:(NSString *)filePath fileNumber:(NSUInteger)fileNumber outOf:(NSUInteger)totalFiles;
+- (void)updater:(Updater *)updater didRecieveBytes:(NSInteger)bytes outOfTotalBytes:(NSInteger)totalBytes forFile:(NSString *)filePath;
+- (void)updater:(Updater *)updater didFinishUpdatingFile:(NSString *)filePath fileNumber:(NSUInteger)fileNumber outOf:(NSUInteger)totalFiles;
+- (void)updater:(Updater *)updater didRemoveFile:(NSString *)filePath;
 - (void)updater:(Updater *)updater didStartUpdatingBundle:(NSString *)bundleName;
 - (void)updater:(Updater *)updater didFinishUpdatingBundle:(NSString *)bundleName;
+- (void)updater:(Updater *)updater didRemoveBundle:(NSString *)bundleName;
+- (void)updater:(Updater *)updater didFailToRemoveBundle:(NSString *)bundleName withError:(NSError *)error;
 - (void)updaterDidFinish:(Updater *)updater;
 
 @end

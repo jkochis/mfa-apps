@@ -8,13 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
+enum {
+	HTTPRequestFileIsDirectoryError = 1002
+};
+
 @protocol HTTPRequestDelegate;
 
 @interface HTTPRequest : NSObject {
 	
 	id<HTTPRequestDelegate> delegate;
 	NSURLConnection *urlConnection;
-	NSURL *remotePath;
+	NSURL *remoteUrl;
 	NSString *filePath;
 	NSFileHandle *fileHandle;
 	NSUInteger totalBytes;
@@ -22,8 +26,12 @@
 }
 
 @property (nonatomic, retain) id delegate;
+@property (nonatomic, retain) NSURLConnection *urlConnection;
+@property (nonatomic, retain) NSURL *remoteUrl;
+@property (nonatomic, retain) NSString *filePath;
+@property (nonatomic, retain) NSFileHandle *fileHandle;
 
-- (void)retrieveFile:(NSURL *)pathToFile;
+- (void)retrieveFile:(NSURL *)fileUrl;
 - (void)cancel;
 
 @end
@@ -34,9 +42,9 @@
 
 @optional
 
-- (BOOL)httpRequest:(HTTPRequest *)httpRequest shouldRetrieveFile:(NSURL *)remotePath withModificationDate:(NSDate *)modificationDate;
-- (void)httpRequest:(HTTPRequest *)httpRequest didCancelFile:(NSURL	*)remotePath;
+- (BOOL)httpRequest:(HTTPRequest *)httpRequest shouldRetrieveFile:(NSURL *)remoteUrl withModificationDate:(NSDate *)modificationDate;
+- (void)httpRequest:(HTTPRequest *)httpRequest didCancelFile:(NSURL	*)remoteUrl;
 - (void)httpRequest:(HTTPRequest *)httpRequest didReceiveBytes:(NSUInteger)bytes outOf:(NSUInteger)totalBytes;
-- (void)httpRequest:(HTTPRequest *)httpRequest didRetrieveFile:(NSString *)pathToFile;
+- (void)httpRequest:(HTTPRequest *)httpRequest didRetrieveFile:(NSString *)filePath;
 
 @end

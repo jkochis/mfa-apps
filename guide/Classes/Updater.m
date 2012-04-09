@@ -13,14 +13,19 @@
 
 @interface Updater (PrivateMethods)
 
-- (NSUInteger)needsUpdating:(NSArray *)tours;
+- (NSUInteger)needsUpdating:(NSArray *)remoteTours;
 - (void)updateNextTour;
+- (void)updateNextTourWithErrors:(BOOL)errors shouldSkipToCurrentFile:(BOOL)skip;
+- (void)skipToTourWithName:(NSString *)bundleName andFile:(NSUInteger)file;
+- (void)removeTours;
+- (void)advanceUpdater;
+- (void)completeUpdate;
 
 @end
 
 @implementation Updater
 
-@synthesize delegate, checking, updatableTours, encounteredErrors;
+@synthesize delegate, checking, updatableTours, removableTours, filesWithErrors, encounteredErrors;
 
 - (void)dealloc
 {
@@ -28,6 +33,8 @@
 	[bundleManager release];
 	[availableTours release];
 	[updatableTours release];
+	[removableTours release];
+	[filesWithErrors release];
 	[super dealloc];
 }
 
@@ -45,8 +52,22 @@
 
 - (void)performUpdate
 {
+	[self performUpdate:NO];
+}
+
+- (void)performUpdate:(BOOL)quick
+{	
 	// start queue
-	[self updateNextTour];
+	quickUpdate = quick;
+	if ([updatableTours count]) {
+		[self updateNextTour];
+	}
+	else {
+		if ([removableTours count]) {
+			[self removeTours];
+		}
+		[self completeUpdate];
+	}
 }
 
 - (void)cancel
@@ -61,30 +82,82 @@
 
 - (void)updateNextTour
 {
-	// Update bundle using ftp bundle manager
-//	ToursXMLTour *remoteTour = [updatableTours objectAtIndex:0];
-//	FTPBundleManager *bundleManager = [[FTPBundleManager alloc] init];
-//	[bundleManager setDelegate:self];
-//	[bundleManager retrieveOrUpdateBundle:[remoteTour bundleName]];
-//	[bundleManager release];
-	
-	// Update bundle using http bundle manager
-	encounteredErrors = NO;
+	[self updateNextTourWithErrors:NO shouldSkipToCurrentFile:NO];
+}
+
+- (void)updateNextTourWithErrors:(BOOL)errors shouldSkipToCurrentFile:(BOOL)skip
+{	
+	// prep update
+	encounteredErrors = errors;
 	ToursXMLTour *remoteTour = [updatableTours objectAtIndex:0];
+	[self setFilesWithErrors:[NSMutableArray array]];
 	if (bundleManager) {
 		[bundleManager release];
 	}
 	bundleManager = [[HTTPBundleManager alloc] init];
 	[bundleManager setDelegate:self];
-	[bundleManager retrieveOrUpdateBundle:[remoteTour bundleName] withTourML:[NSURL URLWithString:[remoteTour bundleTourML]]];
 	
-	// Notify delegate
-	if ([delegate respondsToSelector:@selector(updater:didStartUpdatingBundle:)]) {
-		[delegate updater:self didStartUpdatingBundle:[remoteTour bundleName]];
+	// Check for update type
+	if (quickUpdate) {
+		
+		// Get list of errors
+		NSArray *files = [[NSUserDefaults standardUserDefaults] arrayForKey:[NSString stringWithFormat:@"filesWithErrors_%@", [remoteTour bundleName]]];
+		if (files != nil && [files count]) {
+			[bundleManager retrieveOrUpdateBundle:[remoteTour bundleName] withFiles:[[files mutableCopy] autorelease]];
+			if ([delegate respondsToSelector:@selector(updater:didStartUpdatingBundle:)]) {
+				[delegate updater:self didStartUpdatingBundle:[remoteTour bundleName]];
+			}
+		}
+		else {
+			[self advanceUpdater];
+			return;
+		}
+	}
+	else {
+		if (skip && [[remoteTour bundleName] isEqualToString:[[NSUserDefaults standardUserDefaults] stringForKey:@"updaterCurrentBundle"]]) {
+			[bundleManager retrieveOrUpdateBundle:[remoteTour bundleName] 
+									   withTourML:[NSURL URLWithString:[remoteTour bundleTourML]] 
+								 startingWithFile:[[NSUserDefaults standardUserDefaults] integerForKey:@"updaterCurrentFile"]];
+		}
+		else {
+			[[NSUserDefaults standardUserDefaults] setObject:[remoteTour bundleName] forKey:@"updaterCurrentBundle"];
+			[bundleManager retrieveOrUpdateBundle:[remoteTour bundleName] withTourML:[NSURL URLWithString:[remoteTour bundleTourML]]];
+		}
+		if ([delegate respondsToSelector:@selector(updater:didStartUpdatingBundle:)]) {
+			[delegate updater:self didStartUpdatingBundle:[remoteTour bundleName]];
+		}
 	}
 }
 
-- (void)removeCurrentAndCheckNextTour
+- (void)recheckNextTour
+{
+	
+}
+
+- (void)removeTours
+{
+	if (!bundleManager) {
+		bundleManager = [[HTTPBundleManager alloc] init];
+	}
+	for (Tour *tour in removableTours) {
+		NSError *error = nil;
+		if (![bundleManager removeBundle:[tour bundleName] error:&error]) {
+			if ([delegate respondsToSelector:@selector(updater:didFailToRemoveBundle:withError:)]) {
+				[delegate updater:self didFailToRemoveBundle:[tour bundleName] withError:error];
+			}
+		}
+		else {
+			if ([delegate respondsToSelector:@selector(updater:didRemoveBundle:)]) {
+				[delegate updater:self didRemoveBundle:[tour bundleName]];
+			}
+			[CoreDataManager removeTour:tour];
+		}
+	}
+	[bundleManager release];
+	bundleManager = nil;
+}
+
+- (void)advanceUpdater
 {
 	// Remove from queue
 	[updatableTours removeObjectAtIndex:0];
@@ -94,41 +167,89 @@
 		[self updateNextTour];
 	}
 	else {
-		// Notify delegate that update is complete
-		if ([delegate respondsToSelector:@selector(updaterDidFinish:)]) {
-			[delegate updaterDidFinish:self];
+		
+		// Check for removable tours
+		if ([removableTours count]) {
+			[self removeTours];
 		}
-		[bundleManager release];
-		bundleManager = nil;
+		
+		// Complete update
+		[self completeUpdate];
 	}
 }
 
-- (NSUInteger)needsUpdating:(NSArray *)tours
+- (void)completeUpdate
 {
-	// Nterate through tours, adding tours available for update to queue
+	// Reset current tour and file
+	[[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"updaterCurrentTour"];
+	[[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"updaterCurrentFile"];
+	
+	// Notify delegate that update is complete
+	if ([delegate respondsToSelector:@selector(updaterDidFinish:)]) {
+		[delegate updaterDidFinish:self];
+	}
+	[bundleManager release];
+	bundleManager = nil;
+}
+
+- (NSUInteger)needsUpdating:(NSArray *)remoteTours
+{
+	// Iterate through remote tours, adding tours available for update to queue
+	if (updatableTours) {
+		[updatableTours release];
+	}
 	updatableTours = [[NSMutableArray alloc] init];
-	for (ToursXMLTour *remoteTour in tours)
+	for (ToursXMLTour *remoteTour in remoteTours)
 	{
+		
+		if ([[remoteTour id] intValue] == 77) {
+		
 		// Get tour from CoreData, and if not present add to queue
-		Tour *tour = [CoreDataManager getTourById:[remoteTour id]];
-		if (!tour) {
+		Tour *localTour = [CoreDataManager getTourById:[remoteTour id]];
+		if (!localTour) {
 			[updatableTours addObject:remoteTour];
 		}
+		else { 
 		
-		// If last update resulted in error, make tour available
-		else if ([[tour errors] boolValue]) {
-			[updatableTours addObject:remoteTour];
-		}
-		
-		// Otherwise compare date from XML to date in CoreData or look for errors
-		else {
-			NSDate *date = [remoteTour updatedDate];
-			if ([[tour updatedDate] compare:date] == NSOrderedAscending) {
+			// Update sort weight for local tour
+			[localTour setSortWeight:[remoteTour sortWeight]];
+			[CoreDataManager updateTour:localTour];
+			
+			// If last update resulted in error, make tour available for update
+			if ([[localTour errors] boolValue]) {
 				[updatableTours addObject:remoteTour];
 			}
+			
+			// Otherwise compare date from XML to date in CoreData
+			else {
+				NSDate *date = [remoteTour updatedDate];
+				if ([[localTour updatedDate] compare:date] == NSOrderedAscending) {
+					[updatableTours addObject:remoteTour];
+				}
+			}
+		}
+			
 		}
 	}
-	return [updatableTours count];
+	
+	// Iterate through local tours, adding removable tours to queue
+	if (removableTours) {
+		[removableTours release];
+	}
+	removableTours = [[NSMutableArray alloc] init];
+	NSArray *localTours = [CoreDataManager getTours];
+	for (Tour *localTour in localTours) {
+		
+		// Check remote tours for local tour id
+		NSUInteger index = [remoteTours indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+			return [[localTour id] isEqualToNumber:[(ToursXMLTour *)obj id]];
+		}];
+		if (index == NSNotFound) {
+			[removableTours addObject:localTour];
+		}
+	}
+	
+	return [updatableTours count] + [removableTours count];
 }
 
 #pragma mark -
@@ -149,6 +270,9 @@
 {
 	// Be sure to hold on to tours, then notify delegate if there are updates available
 	checking = NO;
+	if (availableTours != nil) {
+		[availableTours release];
+	}
 	availableTours = [tours retain];
 	if ([delegate respondsToSelector:@selector(updater:hasAvailableUpdates:)]) {
 		[delegate updater:self hasAvailableUpdates:[self needsUpdating:tours]];
@@ -157,76 +281,10 @@
 	dataProvider = nil;
 }
 
-/*
-#pragma mark -
-#pragma mark FTPBundleManagerDelegate Methods
-
-- (void)bundleManager:(FTPBundleManager *)bundleManager didEncounterError:(NSError *)error
-{
-	
-}
-
-- (void)bundleManager:(FTPBundleManager *)bundleManager didFailWithError:(NSError *)error
-{
-	
-}
-
-- (void)bundleManager:(FTPBundleManager *)bundleManager didStartUpdatingFile:(NSString *)pathToFile fileNumber:(NSUInteger)fileNumber outOf:(NSUInteger)totalFiles
-{
-	if ([delegate respondsToSelector:@selector(updater:didStartUpdatingFile:fileNumber:outOf:)]) {
-		[delegate updater:self didStartUpdatingFile:pathToFile fileNumber:fileNumber outOf:totalFiles];
-	}
-}
-
-- (void)bundleManager:(FTPBundleManager *)bundleManager didRecieveBytes:(NSInteger)bytes outOfTotalBytes:(NSInteger)totalBytes forFile:(NSString *)pathToFile
-{
-	if ([delegate respondsToSelector:@selector(updater:didRecieveBytes:outOfTotalBytes:forFile:)]) {
-		[delegate updater:self didRecieveBytes:bytes outOfTotalBytes:totalBytes forFile:pathToFile];
-	}
-}
-
-- (void)bundleManager:(FTPBundleManager *)bundleManager didFinishUpdatingFile:(NSString *)pathToFile fileNumber:(NSUInteger)fileNumber outOf:(NSUInteger)totalFiles
-{
-	if ([delegate respondsToSelector:@selector(updater:didFinishUpdatingFile:fileNumber:outOf:)]) {
-		[delegate updater:self didFinishUpdatingFile:pathToFile fileNumber:fileNumber outOf:totalFiles];
-	}
-}
-
-- (void)bundleManagerCompletedUpdate:(FTPBundleManager *)bundleManager
-{	
-	// grab tour from queue, add or update in CoreData
-	ToursXMLTour *remoteTour = [updatableTours objectAtIndex:0];
-	[CoreDataManager addOrUpdateTourWithId:[remoteTour id]
-									 title:[remoteTour title]
-								bundleName:[remoteTour bundleName]
-								  language:[remoteTour language]
-							   updatedDate:[NSDate date]];
-	
-	// notfiy delegate
-	if ([delegate respondsToSelector:@selector(updater:didFinishUpdatingBundle:)]) {
-		[delegate updater:self didFinishUpdatingBundle:[remoteTour bundleName]];
-	}
-	
-	// remove from queue
-	[updatableTours removeObjectAtIndex:0];
-	
-	// begin updating next bundle, if available
-	if ([updatableTours count]) {
-		[self updateNextTour];
-	}
-	else {
-		// notify delegate that update is complete
-		if ([delegate respondsToSelector:@selector(updaterDidFinish:)]) {
-			[delegate updaterDidFinish:self];
-		}
-	}
-}
-*/
-
 #pragma mark -
 #pragma mark HTTPBundleManagerDelegate Methods
 
-- (void)bundleManager:(HTTPBundleManager *)bundleManager didFailToRetrieveTourML:(NSURL *)tourMLUrl
+- (void)bundleManager:(HTTPBundleManager *)theBundleManager didFailToRetrieveTourML:(NSURL *)tourMLUrl
 {
 	encounteredErrors = YES;
 	if ([delegate respondsToSelector:@selector(updater:didFailWithError:)]) {
@@ -234,39 +292,59 @@
 		NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:1001 userInfo:dict];
 		[delegate updater:self didFailWithError:error];
 	}
-	[self removeCurrentAndCheckNextTour];
+	[self advanceUpdater];
 }
 
-- (void)bundleManager:(HTTPBundleManager *)bundleManager didFailWithError:(NSError *)error
+- (void)bundleManager:(HTTPBundleManager *)theBundleManager didFailWithError:(NSError *)error
 {
-	encounteredErrors = YES;
-	if ([delegate respondsToSelector:@selector(updater:didFailWithError:)]) {
-		[delegate updater:self didFailWithError:error];
+	// Temporary fix not flag tours as having errors when being given a directory in place of a file.
+	// Currently, this is an error with TAP and will be addressed with a PHP fix
+	if ([error code] != HTTPRequestFileIsDirectoryError) {
+		
+		// Flag as errors encountered
+		encounteredErrors = YES;
+		
+		// Update list of files with errors for tour
+		[filesWithErrors addObject:[[theBundleManager updatableFiles] objectAtIndex:0]];
+		[[NSUserDefaults standardUserDefaults] setObject:filesWithErrors forKey:[NSString stringWithFormat:@"filesWithErrors_%@", [theBundleManager bundleName]]];
+		
+		// Notify delegate
+		if ([delegate respondsToSelector:@selector(updater:didFailWithError:)]) {
+			[delegate updater:self didFailWithError:error];
+		}
 	}
 }
 
-- (void)bundleManager:(HTTPBundleManager *)bundleManager didStartUpdatingFile:(NSString *)pathToFile fileNumber:(NSUInteger)fileNumber outOf:(NSUInteger)totalFiles
+- (void)bundleManager:(HTTPBundleManager *)theBundleManager didStartUpdatingFile:(NSString *)filePath fileNumber:(NSUInteger)fileNumber outOf:(NSUInteger)totalFiles
 {
+	[[NSUserDefaults standardUserDefaults] setInteger:fileNumber forKey:@"updaterCurrentFile"];
 	if ([delegate respondsToSelector:@selector(updater:didStartUpdatingFile:fileNumber:outOf:)]) {
-		[delegate updater:self didStartUpdatingFile:pathToFile fileNumber:fileNumber outOf:totalFiles];
+		[delegate updater:self didStartUpdatingFile:filePath fileNumber:fileNumber outOf:totalFiles];
 	}
 }
 
-- (void)bundleManager:(HTTPBundleManager *)bundleManager didRecieveBytes:(NSInteger)bytes outOfTotalBytes:(NSInteger)totalBytes forFile:(NSString *)pathToFile
+- (void)bundleManager:(HTTPBundleManager *)theBundleManager didRecieveBytes:(NSInteger)bytes outOfTotalBytes:(NSInteger)totalBytes forFile:(NSString *)filePath
 {
 	if ([delegate respondsToSelector:@selector(updater:didRecieveBytes:outOfTotalBytes:forFile:)]) {
-		[delegate updater:self didRecieveBytes:bytes outOfTotalBytes:totalBytes forFile:pathToFile];
+		[delegate updater:self didRecieveBytes:bytes outOfTotalBytes:totalBytes forFile:filePath];
 	}
 }
 
-- (void)bundleManager:(HTTPBundleManager *)bundleManager didFinishUpdatingFile:(NSString *)pathToFile fileNumber:(NSUInteger)fileNumber outOf:(NSUInteger)totalFiles
+- (void)bundleManager:(HTTPBundleManager *)theBundleManager didFinishUpdatingFile:(NSString *)filePath fileNumber:(NSUInteger)fileNumber outOf:(NSUInteger)totalFiles
 {
 	if ([delegate respondsToSelector:@selector(updater:didFinishUpdatingFile:fileNumber:outOf:)]) {
-		[delegate updater:self didFinishUpdatingFile:pathToFile fileNumber:fileNumber outOf:totalFiles];
+		[delegate updater:self didFinishUpdatingFile:filePath fileNumber:fileNumber outOf:totalFiles];
 	}
 }
 
-- (void)bundleManagerCompletedUpdate:(HTTPBundleManager *)bundleManager
+- (void)bundleManager:(HTTPBundleManager *)theBundleManager didRemoveFile:(NSString *)filePath
+{
+	if ([delegate respondsToSelector:@selector(updater:didRemoveFile:)]) {
+		[delegate updater:self didRemoveFile:filePath];
+	}
+}
+
+- (void)bundleManagerCompletedUpdate:(HTTPBundleManager *)theBundleManager
 {	
 	// Grab tour from queue, add or update in CoreData
 	ToursXMLTour *remoteTour = [updatableTours objectAtIndex:0];
@@ -274,8 +352,14 @@
 									 title:[remoteTour title]
 								bundleName:[remoteTour bundleName]
 								  language:[remoteTour language]
-							   updatedDate:[NSDate date]
+							   updatedDate:[remoteTour updatedDate]
+								sortWeight:[remoteTour sortWeight]
 									errors:encounteredErrors];
+	
+	// Clear out list of files with errors if none were encountered
+	if (!encounteredErrors) {
+		[[NSUserDefaults standardUserDefaults] setObject:nil forKey:[NSString stringWithFormat:@"filesWithErrors_%@", [theBundleManager bundleName]]];
+	}
 	
 	// Notfiy delegate
 	if ([delegate respondsToSelector:@selector(updater:didFinishUpdatingBundle:)]) {
@@ -283,7 +367,26 @@
 	}
 	
 	// Remove form queue and check next tour
-	[self removeCurrentAndCheckNextTour];
+	[self advanceUpdater];
+}
+
+- (void)bundleManagerCompletedQuickUpdate:(HTTPBundleManager *)theBundleManager
+{
+	// Check to see if the bundle is the one the updater last left off at...
+	ToursXMLTour *remoteTour = [updatableTours objectAtIndex:0];
+	if ([[remoteTour bundleName] isEqualToString:[[NSUserDefaults standardUserDefaults] stringForKey:@"updaterCurrentBundle"]]) {
+		
+		// Turn off quick update
+		quickUpdate = NO;
+		
+		// tell updater to skip to the current file
+		[self updateNextTourWithErrors:encounteredErrors shouldSkipToCurrentFile:YES];
+	}
+	
+	// ...otherwise continue with business as usual
+	else {
+		[self bundleManagerCompletedUpdate:theBundleManager];
+	}
 }
 
 #pragma mark -

@@ -68,6 +68,9 @@
 				else if ([currentTag isEqualToString:@"UpdateDate"]) {
 					[currentTour setUpdatedDate:[dateFormatter dateFromString:currentValue]];
 				}
+				else if ([currentTag isEqualToString:@"SortWeight"]) {
+					[currentTour setSortWeight:[NSNumber numberWithInt:[currentValue intValue]]];
+				}
 				currentTag = nil;
 				currentValue = nil;
 				break;

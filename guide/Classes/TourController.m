@@ -157,13 +157,16 @@
 #pragma mark -
 #pragma mark UINavigationControllerDelegate
 
-- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated
+- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)newViewController animated:(BOOL)animated
 {
-	if ([viewController isMemberOfClass:[StopGroupController class]]) {
-		StopGroupController *stopGroupController = (StopGroupController *)viewController;
-		if ([[[stopGroupController stopGroup] getStopCode] isEqualToString:TOUR_HELP_STOP]) {
-			[self hideHelpButtonAnimated:YES];
-			return;
+	// Check new and existing controllers for help stop
+	NSArray *viewControllers = [navigationController viewControllers];
+	for (UIViewController *viewController in viewControllers) {
+		if ([viewController isMemberOfClass:[StopGroupController class]]) {
+			if ([[[(StopGroupController *)viewController stopGroup] getStopCode] isEqualToString:TOUR_HELP_STOP]) {
+				[self hideHelpButtonAnimated:YES];
+				return;
+			}
 		}
 	}
 	[self showHelpButtonAnimated:YES];

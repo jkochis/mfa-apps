@@ -29,7 +29,7 @@
 				if (tour) {
 					NSDictionary *fileAttributes = [fileManager attributesOfItemAtPath:[documentsDirectory stringByAppendingPathComponent:filename] error:nil];
 					if ([[fileAttributes fileModificationDate] timeIntervalSinceDate:[tour updatedDate]] >= 0) {
-						[CoreDataManager updaterTourUpdatedDate:[NSDate date] byId:[tour id]];
+						[CoreDataManager updateTourUpdatedDate:[NSDate date] byId:[tour id]];
 					}
 				}
 				else {
@@ -76,6 +76,7 @@
 												bundleName:[filename stringByDeletingPathExtension] 
 												  language:language 
 											   updatedDate:[NSDate date] 
+												sortWeight:nil
 													errors:NO];
 				}
 			}

@@ -31,7 +31,11 @@
 					 bundleName:(NSString *)bundleName 
 					   language:(NSString *)language 
 					updatedDate:(NSDate *)updatedDate 
+					 sortWeight:(NSNumber *)sortWeight
 						 errors:(BOOL)errors;
-+ (BOOL)updaterTourUpdatedDate:(NSDate *)updatedDate byId:(NSNumber *)tourId;
++ (BOOL)updateTour:(Tour *)tour;
++ (BOOL)updateTourUpdatedDate:(NSDate *)updatedDate byId:(NSNumber *)tourId;
++ (BOOL)updateTourSortWeight:(NSNumber *)sortWeight byId:(NSNumber *)tourId;
++ (BOOL)removeTour:(Tour *)tour;
 
 @end

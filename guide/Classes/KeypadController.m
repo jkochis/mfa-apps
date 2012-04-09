@@ -116,10 +116,10 @@
 	else if (sender == button8) [lblCode setText:[lblCode.text stringByAppendingString:@"8"]];
 	else if (sender == button9) [lblCode setText:[lblCode.text stringByAppendingString:@"9"]];
 	
-	if ([lblCode.text length] >= 0) {
-		lblHelp.hidden = YES;
-	}
+	// Hide the help label
+	lblHelp.hidden = YES;
 	
+	// If the code meets the minimum length, enable the button
 	if ([lblCode.text length] >= MINIMUM_CODE_LENGTH) {
 		buttonGo.enabled = YES;
 	}
@@ -156,9 +156,17 @@
 		[Analytics trackAction:@"bad-code" forStop:[NSString stringWithFormat:@"<%@>", stopCode]];
 		
 		// Alert user
+		NSString *message = @"Stop [code] is not available on this tour. Please return to the list of available tours and select a different tour.";
+		xmlNodePtr keypadInvalidCodeNode = [TourMLUtils getLocalizationInDocument:[tourController tourDoc] withName:@"KeypadInvalidCode"];
+		if (keypadInvalidCodeNode) {
+			char* keypadInvalidCodeChars = (char*)xmlNodeGetContent(keypadInvalidCodeNode);
+			message = [NSString stringWithUTF8String:keypadInvalidCodeChars];
+			free(keypadInvalidCodeChars);
+		}
+		message = [message stringByReplacingOccurrencesOfString:@"[code]" withString:stopCode];
 		UIAlertView *alert = [[UIAlertView alloc]
 							  initWithTitle:nil
-							  message:[NSString stringWithFormat:@"Invalid code: %@", stopCode]
+							  message:message
 							  delegate:nil
 							  cancelButtonTitle:@"OK"
 							  otherButtonTitles:nil];

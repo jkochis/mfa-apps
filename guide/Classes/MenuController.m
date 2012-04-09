@@ -11,6 +11,8 @@
 #import "CoreDataManager.h"
 #import "LoadingView.h"
 #import "TapAppDelegate.h"
+#import "Tour.h"
+#import "Tour+SortWeightCompare.h"
 #import "UpdaterController.h"
 
 @interface MenuController (PrivateMethods)
@@ -43,7 +45,7 @@
 
 - (void)refresh
 {
-	[self setTours:[CoreDataManager getTours]];
+	[self setTours:[[CoreDataManager getTours] sortedArrayUsingSelector:@selector(sortWeightCompare:)]];
 	if ([tours count]) {
 		[toursView reloadData];
 	}
@@ -102,11 +104,6 @@
 		[[cell textLabel] setBackgroundColor:[UIColor clearColor]];
 		[[cell textLabel] setFont:[UIFont systemFontOfSize:18]];
 		[[cell textLabel] setTextColor:[UIColor whiteColor]];
-		
-		// Init the description
-		//[[cell detailTextLabel] setFont:[UIFont systemFontOfSize:12]];
-		//[[cell detailTextLabel] setTextColor:[UIColor whiteColor]];
-		//[[cell detailTextLabel] setNumberOfLines:2];
 		
 		// Set the custom disclosure indicator
 		UIImageView *disclosure = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"table-cell-disclosure.png"]];

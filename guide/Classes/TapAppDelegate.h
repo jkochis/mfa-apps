@@ -14,8 +14,8 @@
 #import "MenuController.h"
 #import "TourController.h"
 
-#define UPDATE_INTERVAL 10
-#define UPDATE_GROUPS 60
+#define UPDATE_INTERVAL 5
+#define UPDATE_GROUPS 120
 
 @interface TapAppDelegate : NSObject <BackgroundUpdaterDelegate, UIApplicationDelegate, UIAlertViewDelegate>
 {

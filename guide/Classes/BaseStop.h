@@ -26,6 +26,9 @@
 // Return the path to an icon to use for a stop
 - (NSString *)getIconPath;
 
+// Return the stop update date
+- (NSDate *)getUpdateDate;
+
 // Return an array of all the files this stop uses
 - (NSArray *)getAllFiles;
 

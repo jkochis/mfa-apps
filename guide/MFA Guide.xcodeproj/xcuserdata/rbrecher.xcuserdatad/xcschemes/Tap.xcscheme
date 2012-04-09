@@ -14,7 +14,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
-               BuildableName = "Tap.app"
+               BuildableName = "MFA Guide.app"
                BlueprintName = "Tap"
                ReferencedContainer = "container:MFA Guide.xcodeproj">
             </BuildableReference>
@@ -41,7 +41,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
-            BuildableName = "Tap.app"
+            BuildableName = "MFA Guide.app"
             BlueprintName = "Tap"
             ReferencedContainer = "container:MFA Guide.xcodeproj">
          </BuildableReference>
@@ -67,7 +67,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
-            BuildableName = "Tap.app"
+            BuildableName = "MFA Guide.app"
             BlueprintName = "Tap"
             ReferencedContainer = "container:MFA Guide.xcodeproj">
          </BuildableReference>
@@ -77,7 +77,8 @@
       buildConfiguration = "Debug">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Distribution"
+      customArchiveName = "MFAGuide"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

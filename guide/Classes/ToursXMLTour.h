@@ -16,6 +16,7 @@
 	NSString *bundleTourML;
 	NSString *language;
 	NSDate *updatedDate;
+	NSNumber *sortWeight;
 }
 
 @property (nonatomic, retain) NSNumber *id;
@@ -24,5 +25,6 @@
 @property (nonatomic, retain) NSString *bundleTourML;
 @property (nonatomic, retain) NSString *language;
 @property (nonatomic, retain) NSDate *updatedDate;
+@property (nonatomic, retain) NSNumber *sortWeight;
 
 @end
