@@ -43,7 +43,7 @@ static CoreDataManager *sharedUpdatedCoreDataManager = nil;
 	return NSUIntegerMax;
 }
 
-- (void)release
+- (oneway void)release
 {
 	// do nothing
 }

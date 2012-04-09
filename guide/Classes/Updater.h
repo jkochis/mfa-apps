@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import "FTPBundleManager.h"
 #import "HTTPBundleManager.h"
 #import "CoreDataManager.h"
 #import "UpdaterDataProvider.h"

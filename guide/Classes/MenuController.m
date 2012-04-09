@@ -63,7 +63,7 @@
 	[self presentModalViewController:updaterController animated:YES];
 }
 
-- (IBAction)updateButtonSelected:(id)sender
+- (void)updateButtonSelected:(id)sender
 {
 	[self showUpdater];
 }
